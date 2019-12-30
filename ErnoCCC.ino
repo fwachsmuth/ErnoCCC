@@ -6,7 +6,7 @@
  * - D6 SSR ansteuern
  * - Button an D4 abfragen
  * - D5 LED PWM
- * - 
+ * - D10 for a Mosfet or PWM to the LDR-LED?
  * 
  * Schematics:
  * - Fiducials
