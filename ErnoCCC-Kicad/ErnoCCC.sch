@@ -633,7 +633,7 @@ SSR
 Wire Wire Line
 	2000 4700 2150 4700
 $Comp
-L Relay_SolidState:CPC2017N U6
+L ErnoCCC-rescue:CPC2017N-Relay_SolidState U6
 U 1 1 5E30DB67
 P 7950 3600
 F 0 "U6" H 7950 3600 50  0000 C CNN
@@ -688,7 +688,7 @@ Wire Wire Line
 Wire Wire Line
 	8700 3300 8700 3400
 $Comp
-L Relay_SolidState:CPC2017N U7
+L ErnoCCC-rescue:CPC2017N-Relay_SolidState U7
 U 1 1 5E368DC6
 P 7950 4600
 F 0 "U7" H 7950 4600 50  0000 C CNN
@@ -743,7 +743,7 @@ Wire Wire Line
 Wire Wire Line
 	8700 4300 8700 4400
 $Comp
-L Relay_SolidState:CPC2017N U8
+L ErnoCCC-rescue:CPC2017N-Relay_SolidState U8
 U 1 1 5E377C4B
 P 7950 5600
 F 0 "U8" H 7950 5600 50  0000 C CNN
@@ -826,7 +826,7 @@ Connection ~ 8900 3700
 Wire Wire Line
 	8900 4700 8900 4300
 $Comp
-L Relay_SolidState:CPC2317N U10
+L ErnoCCC-rescue:CPC2317N-Relay_SolidState U10
 U 1 1 5E2947AB
 P 9400 4600
 F 0 "U10" H 9400 4600 50  0000 C CNN
@@ -890,7 +890,7 @@ Wire Wire Line
 Wire Wire Line
 	9100 3500 9000 3500
 $Comp
-L Relay_SolidState:CPC2317N U9
+L ErnoCCC-rescue:CPC2317N-Relay_SolidState U9
 U 1 1 5E264720
 P 9400 3600
 F 0 "U9" H 9400 3600 50  0000 C CNN
@@ -1710,7 +1710,7 @@ F 3 "https://www.mouser.de/datasheet/2/293/e-cd-1511557.pdf" H 3200 1150 50  000
 	1    0    0    -1  
 $EndComp
 $Comp
-L Diode_Bridge:HDS20M D1
+L ErnoCCC-rescue:HDS20M-Diode_Bridge D1
 U 1 1 5E4FFE7A
 P 1350 950
 F 0 "D1" H 1150 1100 50  0000 L CNN
@@ -1777,7 +1777,7 @@ $EndComp
 Wire Wire Line
 	5950 6150 5950 6300
 $Comp
-L Display_Character:OLED-128-64-I2C D7
+L ErnoCCC-rescue:OLED-128-64-I2C-Display_Character D7
 U 1 1 5E62B592
 P 3950 3850
 F 0 "D7" H 4000 4450 50  0000 L CNN
@@ -1819,7 +1819,6 @@ Wire Wire Line
 	3500 3500 3550 3500
 Wire Wire Line
 	3500 3600 3550 3600
-NoConn ~ 2000 2600
 Wire Wire Line
 	1400 5100 1400 5200
 Wire Wire Line
@@ -1835,7 +1834,7 @@ LEDP
 Wire Wire Line
 	2000 2500 2150 2500
 $Comp
-L Driver_LED:AL8862SP-13 U11
+L ErnoCCC-rescue:AL8862SP-13-Driver_LED U11
 U 1 1 5E89662B
 P 8600 1850
 F 0 "U11" H 8550 2300 50  0000 C CNN
@@ -2139,7 +2138,7 @@ F 3 "~" H 9050 5500 50  0001 C CNN
 $EndComp
 Connection ~ 8850 5500
 $Comp
-L Display_Character:OLED-128-64-I2C D9
+L ErnoCCC-rescue:OLED-128-64-I2C-Display_Character D9
 U 1 1 5F3E6501
 P 3950 2900
 F 0 "D9" H 4000 3500 50  0000 L CNN
@@ -2184,7 +2183,7 @@ Wire Wire Line
 Wire Wire Line
 	3500 2750 3550 2750
 $Comp
-L Regulator_Linear:LD29150DT50R U5
+L ErnoCCC-rescue:LD29150DT50R-Regulator_Linear U5
 U 1 1 5E4E1D57
 P 2850 950
 F 0 "U5" H 2850 1192 50  0000 C CNN
@@ -2317,4 +2316,19 @@ Wire Wire Line
 	3200 750  3200 950 
 Wire Wire Line
 	2850 1450 2850 1650
+Text Label 2150 2600 0    50   ~ 0
+D10
+$Comp
+L Connector:TestPoint TP15
+U 1 1 5E0E3D08
+P 2400 2600
+F 0 "TP15" V 2350 2800 50  0000 L CNN
+F 1 "D10" V 2350 2550 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 2600 2600 50  0001 C CNN
+F 3 "~" H 2600 2600 50  0001 C CNN
+	1    2400 2600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2000 2600 2400 2600
 $EndSCHEMATC
