@@ -69,9 +69,9 @@ void setup() {
 //  u8g2.begin();
   u8x8.begin();
   u8x8.setFont(u8x8_font_courB18_2x3_n);
-  u8x8.setCursor(4,3);
+  u8x8.setCursor(2,3);
   u8x8.print(":");
-  u8x8.setCursor(10,3);
+  u8x8.setCursor(8,3);
   u8x8.print(":");
 
 //  u8g2.firstPage();
@@ -114,131 +114,79 @@ void loop() {
 
 void drawCurrentTime() {
   currentFilmSecond = abs(currentFrameCount) / filmFps ;
-  currentSubFrame = currentFrameCount % int(filmFps); 
+  currentSubFrame = currentFrameCount % int(filmFps - 1); 
   hours   = numberOfHours(currentFilmSecond);
   minutes = numberOfMinutes(currentFilmSecond);
   seconds = numberOfSeconds(currentFilmSecond);
   
-  rightSecDigit = seconds % 10;
-
 // Only paint the glyphs that have changed, this improves the display framerate a lot
+//
+  rightSecDigit = seconds % 10;
   if (rightSecDigit != prevPaintedRightSecDigit) {
     prevPaintedRightSecDigit = rightSecDigit;
-    u8x8.setCursor(12,3);
+    u8x8.setCursor(12 + (sign ? 2 : 0),3);
     u8x8.print(rightSecDigit);
     leftSecDigit = seconds / 10;
     if (leftSecDigit != prevPaintedLeftSecDigit) {
       prevPaintedLeftSecDigit = leftSecDigit;
-      u8x8.setCursor(10,3);
+      u8x8.setCursor(10 + (sign ? 2 : 0),3);
       u8x8.print(leftSecDigit);
       rightMinDigit = minutes % 10;
       if (rightMinDigit != prevPaintedRightMinDigit) {
         prevPaintedRightMinDigit = rightMinDigit;
-        u8x8.setCursor(6,3);
+        u8x8.setCursor(6 + (sign ? 2 : 0),3);
         u8x8.print(rightMinDigit);
         leftMinDigit = minutes / 10;
         if (leftMinDigit != prevPaintedLeftMinDigit) {
           prevPaintedLeftMinDigit = leftMinDigit;
-          u8x8.setCursor(4,3);
+          u8x8.setCursor(4 + (sign ? 2 : 0),3);
           u8x8.print(leftMinDigit);
           hourDigit = hours % 10;
           if (hourDigit != prevPaintedHourDigit) {
             prevPaintedHourDigit = hourDigit;
-            u8x8.setCursor(0,3);
+            u8x8.setCursor(0 + (sign ? 2 : 0),3);
             u8x8.print(hourDigit);
           }
         }
       }
     }
   }
+  
+  // Handle negative frame counts and time nicely
+  //
   if (rightSecDigit == 0) {
     if (currentFrameCount < 0) sign = true;
     else sign = false;
     if (sign != prevPaintedSign) {
       prevPaintedSign = sign;
-      u8x8.setCursor(0,3);
-      if (sign) u8x8.print("-");
-      else u8x8.print(" ");
+      
+      if (sign) {
+        // when tc is negative, do not render sub frame cont, but a leading minus sign
+        u8x8.setCursor(0,3);
+        u8x8.print("-");
+        u8x8.setCursor(0,3);
+        u8x8.print("-0:00:00");
+      } else {
+        u8x8.setCursor(0,3);
+        u8x8.print(" ");
+        u8x8.setCursor(0,3);
+        u8x8.print("0:00:00 ");
+      }
     }
-  }
-
-  u8x8.setFont(u8x8_font_courB18_2x3_n); // u8x8_font_inr21_2x4_n, u8x8_font_profont29_2x3_n
-  if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + ((!sign) ? 2 : 3)) << 1),0);
+  } 
+  if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + ((!sign) ? 2 : 3)) << 1),0); // Kalle magic!
   else u8x8.setCursor(12,0);
   u8x8.print(" ");
   u8x8.print(currentFrameCount);
-  
-  
-//    u8x8.setCursor(0,3);
-//    if (currentFrameCount < 0) { 
-//         u8x8.print("-");
-//      } else {
-//        u8x8.print(" ");
-//    }
-//    u8x8.print(hours);
-//    u8x8.print(":");
-//    if (minutes < 10) u8x8.print("0");
-//    u8x8.print(minutes);
-//    u8x8.print(":");
-//    if (seconds < 10) u8x8.print("0");
-//    u8x8.print(seconds);
-//
-//    u8x8.setFont(u8x8_font_8x13_1x2_r);
-//    u8x8.setCursor(0,6);
-//    u8x8.print(frequency);
-//    u8x8.print("fps   ");
-//    u8x8.print(currentSubFrame);
-//        u8x8.print(" ");
-//
 
-//    u8x8.print("0123456");
-//    u8x8.setCursor(0,3);
-//    u8x8.print("-0:12:34");
-//    u8x8.setFont(u8x8_font_8x13_1x2_r);
-//    u8x8.setCursor(0,6);
-//    u8x8.print("18.45 fps");
-//        
-//    u8g2.firstPage();
-//    do {
-//      u8g2.setFont(u8g2_font_10x20_mn);
-//      u8g2.setCursor(0, 16);
-//      u8g2.print(currentFrameCount);
-//
-//      u8g2.drawStr(3 * charwidth,32,":");
-//      u8g2.drawStr(6 * charwidth,32,":");
-//      u8g2.drawStr(9 * charwidth,32,".");
-//      
-//      u8g2.setCursor(0,32);
-//      if (currentFrameCount < 0) { 
-//         u8g2.print("-");
-//      } else {
-//        u8g2.print(" ");
-//      }
-//      
-//      if (hours < 10) u8g2.print("0");
-//      // u8g2.setCursor(8,32);
-//      u8g2.print(hours);
-//      u8g2.setCursor(4 * charwidth,32);
-//      if (minutes < 10) u8g2.print("0");
-//      u8g2.print(minutes);
-//      u8g2.setCursor(7 * charwidth,32);
-//      if (seconds < 10) u8g2.print("0");
-//      u8g2.print(seconds);
-//      u8g2.setCursor(10 * charwidth,32);
-//      
-//      if (currentSubFrame < 10) u8g2.print("0");
-//      u8g2.print(currentSubFrame);
-//        
-//      
-//      u8g2.setCursor(0, 48);
-//      u8g2.print(frequency);
-//   } while ( u8g2.nextPage() );
-
-  //Serial.println(currentFrameCount);
-//   if (Serial.available()) {
-//    Serial.read();
-//    Serial.println("Reset to zero");
-//    myEnc.write(0);
-//  }
-
+  // Print current Subframe for SMPTE compliance
+  //
+  if (currentFrameCount >= 0) {
+    u8x8.setFont(u8x8_font_7x14B_1x2_n);
+    u8x8.setCursor(14,3);
+    if (currentSubFrame < 10) u8x8.print("0");
+    u8x8.print(currentSubFrame);
+    u8x8.setFont(u8x8_font_courB18_2x3_n);
+  } 
+ 
 }
