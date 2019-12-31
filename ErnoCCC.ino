@@ -20,8 +20,8 @@
 #include <U8g2lib.h>             // Display Driver
 
 // Instantuiate soem Objects
-U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-//U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+//U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 Encoder myEnc(3, 2);
 
@@ -130,7 +130,7 @@ void loop() {
     // average several reading together
     sum = sum + FreqMeasure.read();
     count = count + 1;
-    if (count > 20) {
+    if (count > 9) {
       frequency = FreqMeasure.countToFrequency(sum / count);
       sum = 0;
       count = 0;

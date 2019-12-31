@@ -440,8 +440,6 @@ Wire Wire Line
 	4450 6000 4500 6000
 Text Label 4500 7100 0    50   ~ 0
 ICP1
-Wire Wire Line
-	4500 7000 4500 7100
 $Comp
 L Connector:TestPoint TP5
 U 1 1 5E1C35DB
@@ -1724,7 +1722,7 @@ $Comp
 L Connector:Screw_Terminal_01x05 J4
 U 1 1 5E5035B9
 P 10300 3500
-F 0 "J4" H 10380 3542 50  0000 L CNN
+F 0 "J4" H 10250 3800 50  0000 L CNN
 F 1 "Erno Controller" H 10300 3150 50  0000 L CNN
 F 2 "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-5-2.54_1x05_P2.54mm_Horizontal" H 10300 3500 50  0001 C CNN
 F 3 "~" H 10300 3500 50  0001 C CNN
@@ -2331,4 +2329,57 @@ F 3 "~" H 2600 2600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2000 2600 2400 2600
+$Comp
+L Connector_Generic:Conn_01x07 J7
+U 1 1 5E107107
+P 5750 5100
+F 0 "J7" H 5668 4575 50  0000 C CNN
+F 1 "Conn_01x07" H 5668 4666 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Horizontal" H 5750 5100 50  0001 C CNN
+F 3 "~" H 5750 5100 50  0001 C CNN
+	1    5750 5100
+	-1   0    0    1   
+$EndComp
+Text Label 6050 4800 0    50   ~ 0
+D10
+Text Label 6050 5200 0    50   ~ 0
+~STOP~
+Text Label 4500 7200 0    50   ~ 0
+GRAY-A
+Text Label 4500 6100 0    50   ~ 0
+GRAY-B
+Wire Wire Line
+	4450 6000 4450 6100
+Wire Wire Line
+	4450 6100 4500 6100
+Wire Wire Line
+	4500 7000 4500 7200
+Text Label 6050 5400 0    50   ~ 0
+GRAY-A
+Text Label 6050 5300 0    50   ~ 0
+GRAY-B
+Text Label 6050 5100 0    50   ~ 0
+SSR
+Text Label 8850 5350 0    50   ~ 0
+POTB
+Text Label 8700 4950 0    50   ~ 0
+POTA
+Text Label 6050 5000 0    50   ~ 0
+POTA
+Text Label 6050 4900 0    50   ~ 0
+POTB
+Wire Wire Line
+	5950 4800 6050 4800
+Wire Wire Line
+	5950 4900 6050 4900
+Wire Wire Line
+	5950 5000 6050 5000
+Wire Wire Line
+	5950 5100 6050 5100
+Wire Wire Line
+	5950 5200 6050 5200
+Wire Wire Line
+	5950 5300 6050 5300
+Wire Wire Line
+	5950 5400 6050 5400
 $EndSCHEMATC
