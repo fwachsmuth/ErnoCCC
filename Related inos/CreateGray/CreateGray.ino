@@ -62,6 +62,7 @@ void setup() {
 
   TCCR2A = 0;           //Timer2 Settings: WGM mode 0
   TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);   //Timer2 Settings: Timer Prescaler 1024
+//  TCCR2B |= (1 << CS22) | (0 << CS21) | (1 << CS20);   //Timer2 Settings: Timer Prescaler 1024
   TIMSK2 = _BV(TOIE2);  //Timer2 Overflow Interrupt Enable 
   TCNT2 = t2Speed;      //reset timer
 }

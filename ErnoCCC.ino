@@ -35,8 +35,6 @@ Encoder myEnc(3, 2);
 #define numberOfMinutes(_time_) ((_time_ / SECS_PER_MIN) % SECS_PER_MIN) 
 #define numberOfHours(_time_) (( _time_% SECS_PER_DAY) / SECS_PER_HOUR)
 
-#define charwidth 9
-
 unsigned long totalSeconds = 0;
 long currentFrameCount;
 float filmFps = 25;
@@ -51,16 +49,19 @@ uint8_t leftSecDigit = 0;
 uint8_t rightMinDigit = 0;
 uint8_t leftMinDigit = 0;
 uint8_t hourDigit = 0;
+bool sign = false;
 
 uint8_t prevPaintedRightSecDigit = 99;
 uint8_t prevPaintedLeftSecDigit = 99;
 uint8_t prevPaintedRightMinDigit = 99;
 uint8_t prevPaintedLeftMinDigit =99;
 uint8_t prevPaintedHourDigit = 99;
+bool prevPaintedSign = false;
 
 
 
 void setup() {
+  //myEnc.write(32768);
   Serial.begin(115200);
 //  Serial.println("Erno Framecounter:");
 //  u8g2.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
@@ -91,6 +92,7 @@ unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enou
 
 void loop() {
   currentFrameCount = myEnc.read() / 4;
+  Serial.println(currentFrameCount);
   if (currentFrameCount != prevFrameCount) {
     prevFrameCount = currentFrameCount;
     drawCurrentTime();
@@ -111,47 +113,60 @@ void loop() {
 }
 
 void drawCurrentTime() {
-  currentFilmSecond = currentFrameCount / filmFps ;
+  currentFilmSecond = abs(currentFrameCount) / filmFps ;
   currentSubFrame = currentFrameCount % int(filmFps); 
   hours   = numberOfHours(currentFilmSecond);
   minutes = numberOfMinutes(currentFilmSecond);
   seconds = numberOfSeconds(currentFilmSecond);
-
-  u8x8.setFont(u8x8_font_courB18_2x3_n); // u8x8_font_inr21_2x4_n, u8x8_font_profont29_2x3_n
-  u8x8.setCursor(0,0);
-  u8x8.print(currentFrameCount);
+  
   rightSecDigit = seconds % 10;
 
 // Only paint the glyphs that have changed, this improves the display framerate a lot
   if (rightSecDigit != prevPaintedRightSecDigit) {
     prevPaintedRightSecDigit = rightSecDigit;
-    u8x8.setCursor(14,3);
+    u8x8.setCursor(12,3);
     u8x8.print(rightSecDigit);
     leftSecDigit = seconds / 10;
     if (leftSecDigit != prevPaintedLeftSecDigit) {
       prevPaintedLeftSecDigit = leftSecDigit;
-      u8x8.setCursor(12,3);
+      u8x8.setCursor(10,3);
       u8x8.print(leftSecDigit);
       rightMinDigit = minutes % 10;
       if (rightMinDigit != prevPaintedRightMinDigit) {
         prevPaintedRightMinDigit = rightMinDigit;
-        u8x8.setCursor(8,3);
+        u8x8.setCursor(6,3);
         u8x8.print(rightMinDigit);
         leftMinDigit = minutes / 10;
         if (leftMinDigit != prevPaintedLeftMinDigit) {
           prevPaintedLeftMinDigit = leftMinDigit;
-          u8x8.setCursor(6,3);
+          u8x8.setCursor(4,3);
           u8x8.print(leftMinDigit);
           hourDigit = hours % 10;
           if (hourDigit != prevPaintedHourDigit) {
             prevPaintedHourDigit = hourDigit;
-            u8x8.setCursor(2,3);
+            u8x8.setCursor(0,3);
             u8x8.print(hourDigit);
           }
         }
       }
     }
   }
+  if (rightSecDigit == 0) {
+    if (currentFrameCount < 0) sign = true;
+    else sign = false;
+    if (sign != prevPaintedSign) {
+      prevPaintedSign = sign;
+      u8x8.setCursor(0,3);
+      if (sign) u8x8.print("-");
+      else u8x8.print(" ");
+    }
+  }
+
+  u8x8.setFont(u8x8_font_courB18_2x3_n); // u8x8_font_inr21_2x4_n, u8x8_font_profont29_2x3_n
+  if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + ((!sign) ? 2 : 3)) << 1),0);
+  else u8x8.setCursor(12,0);
+  u8x8.print(" ");
+  u8x8.print(currentFrameCount);
   
   
 //    u8x8.setCursor(0,3);
