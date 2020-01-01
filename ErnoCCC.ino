@@ -20,19 +20,22 @@
 #include <U8g2lib.h>          // Display Driver
 #include <SwitchManager.h>    // Button Handling and Debouncing
 
-// Instantuiate soem Objects
-//U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+// Instantuiate some Objects
+//
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);   
-
 Encoder myEnc(3, 2);
+SwitchManager theButton;
 
-SwitchManager button;
+// ---- Define uC Pins ------------------------------------
+//
+#define theButtonPin     4
+#define stopPin       9
+#define ssrPin        6
+#define ledPwmPin     5
+
 
 // ---- Define useful time constants and macros ------------------------------------
 //
-#define buttonPin     4
-#define stopPin       9
-
 #define SECS_PER_MIN  (60UL)
 #define SECS_PER_HOUR (3600UL)
 #define SECS_PER_DAY  (SECS_PER_HOUR * 24L)
@@ -76,6 +79,7 @@ uint8_t prevPaintedLeftMinDigit =99;
 uint8_t prevPaintedHourDigit = 99;
 bool prevPaintedSign = false;
 
+// Make some nice pixel gfx
 
 const uint8_t unlockedLockTop[24] = {
   0b00000000
@@ -169,19 +173,16 @@ const uint8_t twoThirdsBottom[8] = {
 };
 
 void setup() {
-  button.begin(buttonPin, onButtonPress);
-  //myEnc.write(32768);
+  theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
-//  Serial.println("Erno Framecounter:");
-//  u8g2.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
-//  u8x8.setBusClock(800000);
-//  u8g2.begin();
+//  u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
+//  u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
   u8x8.begin();
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   u8x8.setCursor(2,3);
   u8x8.print(":  :");
 
-  pinMode(stopPin, INPUT);
+  pinMode(stopPin, INPUT_PULLUP);
 
   u8x8.drawTile(12,7,2,lockBottom);
   unlockLock();
@@ -205,7 +206,7 @@ float prevPaintedFrequency = -999;
 
 
 void loop() {
-  button.check();
+  theButton.check();
   if (digitalRead(stopPin) == LOW) onStopSignal();
   
   currentFrameCount = myEnc.read() / 4;
@@ -229,13 +230,11 @@ void loop() {
   if (frequency != prevPaintedFrequency) drawCurrentFrequency();
 }
 
-void handleSwitchPress (const byte newState, const unsigned long interval, const byte whichPin) {
-  if (interval >= 1000) return;
-}
 
 void onButtonPress(const byte newState, const unsigned long interval, const byte whichPin) {
+//  if (interval >= 1000) return; // This would detect a long press
   if (newState == LOW && interval < 1500) {
-    Serial.println("Button has been pressed!");
+    Serial.println("The Button has been pressed!");
     if (buttonState == BTN_STATE_UNLOCKED) lockLock();
     else buttonState++;
     if (buttonState >= BTN_STATE_9) drawCurrentFps();
@@ -273,8 +272,8 @@ void drawCurrentFps() {
       return;
     case BTN_STATE_16_2_3:
       u8x8.print(16);
-      u8x8.drawTile(((stopped) ? 10 : 4),6,1,twoThirdsTop);
-      u8x8.drawTile(((stopped) ? 10 : 4),7,1,twoThirdsBottom);
+      u8x8.drawTile(((stopped) ? 10 : 5),6,1,twoThirdsTop);
+      u8x8.drawTile(((stopped) ? 10 : 5),7,1,twoThirdsBottom);
       return;
     case BTN_STATE_18:
       u8x8.print(18);
