@@ -41,44 +41,55 @@ SwitchManager theButton;
 #define SECS_PER_DAY  (SECS_PER_HOUR * 24L)
 #define numberOfSeconds(_time_) (_time_ % SECS_PER_MIN)  
 #define numberOfMinutes(_time_) ((_time_ / SECS_PER_MIN) % SECS_PER_MIN) 
-#define numberOfHours(_time_) (( _time_% SECS_PER_DAY) / SECS_PER_HOUR)
+#define numberOfHours(_time_) ((_time_ % SECS_PER_DAY) / SECS_PER_HOUR)
 
-// ---- Button state machine -------------------------------------------------------
+// ---- Running screen state machine --------------------------------------
 //
-#define BTN_STATE_UNLOCKED     0
-#define BTN_STATE_LOCKED       1
-#define BTN_STATE_9            2
-#define BTN_STATE_16_2_3       3
-#define BTN_STATE_18           4
-#define BTN_STATE_24           5
-#define BTN_STATE_25           6
+#define FPS_UNLOCKED 0
 
-uint8_t buttonState = 0;
+// ---- Multiple state machines (^) -----------------------
+//
+#define FPS_18           1
+#define FPS_24           2
+#define FPS_25           3
+#define FPS_9            4
+#define FPS_16_2_3       5
 
-bool stopped = false;
+uint8_t fpsState = 0;
+uint8_t prevPaintedFps     = 0;
+
+
+// ---- Display state machine ----------------------------------
+//
+#define STATE_STOPPED   0
+#define STATE_RESET     1
+#define STATE_RUNNING   16
+
+uint8_t state            = 0;
+uint8_t prevPaintedState = 99;
+
 unsigned long totalSeconds = 0;
 long currentFrameCount;
-float filmFps = 25;
-float playbackFps = 18;
-uint8_t hours   = 0;
-uint8_t minutes = 0;
-uint8_t seconds = 0;
-uint8_t currentSubFrame = 0;
+float filmFps              = 18;
+float playbackFps          = 18;
+uint8_t hours              = 0;
+uint8_t minutes            = 0;
+uint8_t seconds            = 0;
+uint8_t currentSubFrame    = 0;
 
 uint8_t rightSecDigit = 0;
-uint8_t leftSecDigit = 0;
+uint8_t leftSecDigit  = 0;
 uint8_t rightMinDigit = 0;
-uint8_t leftMinDigit = 0;
-uint8_t hourDigit = 0;
-bool sign = false;
+uint8_t leftMinDigit  = 0;
+uint8_t hourDigit     = 0;
+bool sign             = false;
 
 uint8_t prevPaintedRightSecDigit = 99;
-uint8_t prevPaintedLeftSecDigit = 99;
+uint8_t prevPaintedLeftSecDigit  = 99;
 uint8_t prevPaintedRightMinDigit = 99;
-uint8_t prevPaintedLeftMinDigit =99;
-uint8_t prevPaintedHourDigit = 99;
-bool prevPaintedSign = false;
-
+uint8_t prevPaintedLeftMinDigit  = 99;
+uint8_t prevPaintedHourDigit     = 99;
+bool prevPaintedSign             = false;
 // Make some nice pixel gfx
 
 const uint8_t unlockedLockTop[24] = {
@@ -109,7 +120,6 @@ const uint8_t unlockedLockTop[24] = {
 , 0b00000000
 , 0b00000000
 };
-
 const uint8_t lockedLockTop[16] = {
   0b00000000
 , 0b00000000
@@ -129,7 +139,6 @@ const uint8_t lockedLockTop[16] = {
 , 0b00000000
 , 0b00000000
 };
-
 const uint8_t lockBottom[16] = {
   0b00000000
 , 0b00000000
@@ -149,7 +158,6 @@ const uint8_t lockBottom[16] = {
 , 0b00000000
 , 0b00000000
 };
-
 const uint8_t twoThirdsTop[8] = {
   0b01000010
 , 0b01100001
@@ -160,7 +168,6 @@ const uint8_t twoThirdsTop[8] = {
 , 0b00100000
 , 0b00010000
 };
-
 const uint8_t twoThirdsBottom[8] = {
   0b00001000
 , 0b00000100
@@ -171,6 +178,7 @@ const uint8_t twoThirdsBottom[8] = {
 , 0b01001001
 , 0b00110110
 };
+const uint8_t emptyTile[8] = {0,0,0,0,0,0,0,0};
 
 void setup() {
   pinMode(stopPin, INPUT_PULLUP);
@@ -179,17 +187,9 @@ void setup() {
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
-//  u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
-//  u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
   u8x8.begin();
-  u8x8.setFont(u8x8_font_courB18_2x3_n);
-  u8x8.setCursor(2,3);
-  u8x8.print(":  :");
-
-  u8x8.drawTile(12,7,2,lockBottom);
-  unlockLock();
-
-  FreqMeasure.begin();  // This should go into the state machine and only start once the viewer is not stopped
+  //u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
+  //u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
 }
 
 long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
@@ -203,127 +203,176 @@ float prevPaintedFrequency = -999;
 
 void loop() {
   theButton.check();
-  if (digitalRead(stopPin) == LOW) onStopSignal();
+  if (digitalRead(stopPin) == LOW && state >> 4 == 1)  state = STATE_STOPPED;
+  if (digitalRead(stopPin) == HIGH && state >> 4 == 0) state = STATE_RUNNING;
   
   currentFrameCount = myEnc.read() / 4;
-  Serial.println(currentFrameCount);
   if (currentFrameCount != prevFrameCount) {
     prevFrameCount = currentFrameCount;
-    drawCurrentTime();
+    drawCurrentTime(false);
   }
+
+  if (state != prevPaintedState) drawState();
 
   if (FreqMeasure.available()) {
     // average several reading together
     freqSum = freqSum + FreqMeasure.read();
-    freqCount = freqCount + 1;
+    freqCount++;
     if (freqCount > 9) {
       frequency = FreqMeasure.countToFrequency(freqSum / freqCount);
       freqSum = 0;
       freqCount = 0;
     }
-  }
-
-  if (frequency != prevPaintedFrequency) drawCurrentFrequency();
+    if (frequency != prevPaintedFrequency && state == STATE_RUNNING) drawCurrentCustomFrequency();
+  } else if (fpsState != prevPaintedFps && state == STATE_RUNNING) drawCurrentFps();
 }
 
+void drawState() {
+  switch (state) {
+    default:
+      notFound();
+      break;
+    case STATE_STOPPED:
+      FreqMeasure.end();
+      drawCurrentTime(true);
+      u8x8.setFont(u8x8_font_7x14B_1x2_r);
+      u8x8.setCursor(1,6);
+      u8x8.print("shot @     fps ");
+      break;
+    case STATE_RESET:
+      u8x8.clearDisplay();
+      break;
+    case STATE_RUNNING:
+      u8x8.setFont(u8x8_font_7x14B_1x2_r);
+      u8x8.setCursor(1,6);
+      u8x8.print("       fps    ");
+      u8x8.drawTile(12,7,2,lockBottom);
+      u8x8.drawTile(12,6,3,unlockedLockTop);
+      fpsState = FPS_UNLOCKED;
+      FreqMeasure.begin();
+      drawCurrentTime(true);
+  }
+  prevPaintedState = state;
+}
 
 void onButtonPress(const byte newState, const unsigned long interval, const byte whichPin) {
-//  if (interval >= 1000) return; // This would detect a long press
-  if (newState == LOW && interval < 1500) {
-    Serial.println("The Button has been pressed!");
-    if (buttonState == BTN_STATE_UNLOCKED) lockLock();
-    else buttonState++;
-    if (buttonState >= BTN_STATE_9) drawCurrentFps();
-  } else if (newState == LOW && interval >= 1500) {
-    
+//  if (interval >= 1000) break; // This would detect a long press
+  if (newState == HIGH && interval < 1500) {
+    switch (state) {
+      case STATE_RUNNING:
+        fpsState++;
+        if (fpsState == FPS_UNLOCKED + 1) {
+          u8x8.drawTile(12,6,2,lockedLockTop);
+          u8x8.drawTile(14,6,1,emptyTile);
+          u8x8.setFont(u8x8_font_7x14B_1x2_n);
+          u8x8.setCursor(5,6);
+          u8x8.print("  ");
+          FreqMeasure.end();
+          drawCurrentFps();
+        } else drawCurrentFps();
+      case STATE_STOPPED:
+        fpsState++;
+        drawCurrentFps();
+        break;
+      default:
+        break;
+    }
+  } else if (newState == HIGH && interval >= 1500 && state == STATE_STOPPED) {
+    state = STATE_RESET;
+    drawState();
   }
-}
-
-void onStopSignal() {
-  u8x8.setFont(u8x8_font_7x14B_1x2_r);
-  u8x8.setCursor(1,6);
-  u8x8.print("shot @     fps ");
-  if (buttonState == BTN_STATE_UNLOCKED) buttonState = BTN_STATE_LOCKED;
-  stopped = true;
 }
 
 void drawCurrentFps() {
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
+  u8x8.setCursor(((state == STATE_RUNNING) ? 4 : 10),6);
+  u8x8.print(" ");
+  u8x8.setCursor(((state == STATE_RUNNING) ? 2 : 8),6);
   
-  if (stopped) {
-    u8x8.setCursor(10,6);
-    u8x8.print(" ");
-    u8x8.setCursor(8,6);
-  } else {
-    u8x8.setCursor(2,6);
-    u8x8.print("     ");
-    u8x8.setCursor(2,6);
-  }
-  
-  switch (buttonState) {
+  switch (fpsState) {
     default:
-      buttonState = BTN_STATE_9;
-    case BTN_STATE_9:
-      u8x8.print(" 9");
-      return;
-    case BTN_STATE_16_2_3:
-      u8x8.print(16);
-      u8x8.drawTile(((stopped) ? 10 : 5),6,1,twoThirdsTop);
-      u8x8.drawTile(((stopped) ? 10 : 5),7,1,twoThirdsBottom);
-      return;
-    case BTN_STATE_18:
+      fpsState = FPS_18;
+    case FPS_18:
+      playbackFps = 18;
       u8x8.print(18);
-      return;
-    case BTN_STATE_24:
+      break;
+    case FPS_24:
+      playbackFps = 24;
       u8x8.print(24);
-      return;
-    case BTN_STATE_25:
+      break;
+    case FPS_25:
+      playbackFps = 25;
       u8x8.print(25);
+      break;
+    case FPS_9:
+      playbackFps = 9;
+      u8x8.print(" 9");
+      break;
+    case FPS_16_2_3:
+      playbackFps = 16 + 2/3;
+      u8x8.print(16);
+      u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
+      u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
   }
+  prevPaintedFps = fpsState;
 }
 
-void drawCurrentFrequency() {
+void drawCurrentCustomFrequency() {
   prevPaintedFrequency = frequency;
 
-  u8x8.setFont(u8x8_font_7x14B_1x2_r);
+  u8x8.setFont(u8x8_font_7x14B_1x2_n);
   u8x8.setCursor(2,6);
+  if (frequency < 10) u8x8.print(" ");
   u8x8.print(frequency);
-  u8x8.print(" fps");
 }
 
-void drawCurrentTime() {
+void drawCurrentTime(bool forceDraw) {
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   
-  currentFilmSecond = abs(currentFrameCount) / filmFps ;
-  currentSubFrame = currentFrameCount % int(filmFps - 1); 
+  currentFilmSecond = abs(currentFrameCount) / filmFps;
+  currentSubFrame = currentFrameCount % int(filmFps); 
   hours   = numberOfHours(currentFilmSecond);
   minutes = numberOfMinutes(currentFilmSecond);
   seconds = numberOfSeconds(currentFilmSecond);
-  
-// Only paint the glyphs that have changed, this improves the display framerate a lot
-//
   rightSecDigit = seconds % 10;
-  if (rightSecDigit != prevPaintedRightSecDigit) {
+
+  // Handle negative frame counts and time nicely
+  //
+  if (rightSecDigit == 0 || forceDraw) {
+    if (currentFrameCount < 0) sign = true;
+    else sign = false;
+    if (sign != prevPaintedSign || forceDraw) {
+      forceDraw = true;
+      prevPaintedSign = sign;
+      u8x8.setCursor(((sign) ? 4 : 2),3);
+      u8x8.print(":  :  -");
+      // when tc is negative, do not render sub frame count, but a leading minus sign
+    }
+  }
+
+  // Only paint the glyphs that have changed, this improves the display framerate a lot
+  //
+  if (rightSecDigit != prevPaintedRightSecDigit || forceDraw) {
     prevPaintedRightSecDigit = rightSecDigit;
     u8x8.setCursor(12 + (sign ? 2 : 0),3);
     u8x8.print(rightSecDigit);
     leftSecDigit = seconds / 10;
-    if (leftSecDigit != prevPaintedLeftSecDigit) {
+    if (leftSecDigit != prevPaintedLeftSecDigit || forceDraw) {
       prevPaintedLeftSecDigit = leftSecDigit;
       u8x8.setCursor(10 + (sign ? 2 : 0),3);
       u8x8.print(leftSecDigit);
       rightMinDigit = minutes % 10;
-      if (rightMinDigit != prevPaintedRightMinDigit) {
+      if (rightMinDigit != prevPaintedRightMinDigit || forceDraw) {
         prevPaintedRightMinDigit = rightMinDigit;
         u8x8.setCursor(6 + (sign ? 2 : 0),3);
         u8x8.print(rightMinDigit);
         leftMinDigit = minutes / 10;
-        if (leftMinDigit != prevPaintedLeftMinDigit) {
+        if (leftMinDigit != prevPaintedLeftMinDigit || forceDraw) {
           prevPaintedLeftMinDigit = leftMinDigit;
           u8x8.setCursor(4 + (sign ? 2 : 0),3);
           u8x8.print(leftMinDigit);
           hourDigit = hours % 10;
-          if (hourDigit != prevPaintedHourDigit) {
+          if (hourDigit != prevPaintedHourDigit || forceDraw) {
             prevPaintedHourDigit = hourDigit;
             u8x8.setCursor(0 + (sign ? 2 : 0),3);
             u8x8.print(hourDigit);
@@ -332,29 +381,7 @@ void drawCurrentTime() {
       }
     }
   }
-  
-  // Handle negative frame counts and time nicely
-  //
-  if (rightSecDigit == 0) {
-    if (currentFrameCount < 0) sign = true;
-    else sign = false;
-    if (sign != prevPaintedSign) {
-      prevPaintedSign = sign;
-      
-      if (sign) {
-        // when tc is negative, do not render sub frame cont, but a leading minus sign
-        u8x8.setCursor(0,3);
-        u8x8.print("-");
-        u8x8.setCursor(0,3);
-        u8x8.print("-0:00:00");
-      } else {
-        u8x8.setCursor(0,3);
-        u8x8.print(" ");
-        u8x8.setCursor(0,3);
-        u8x8.print("0:00:00 ");
-      }
-    }
-  } 
+
   if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
   else u8x8.setCursor(12,0);
   u8x8.print(" ");
@@ -371,16 +398,7 @@ void drawCurrentTime() {
  
 }
 
-void lockLock() {
-  buttonState = BTN_STATE_LOCKED;
-  u8x8.drawTile(12,6,2,lockedLockTop);
-  u8x8.setCursor(14,6);
-  u8x8.setFont(u8x8_font_7x14B_1x2_n);
-  u8x8.print(" ");
-  FreqMeasure.end();
-}
-
-void unlockLock() {
-  buttonState = BTN_STATE_UNLOCKED;
-  u8x8.drawTile(12,6,3,unlockedLockTop);
+void notFound() {
+  u8x8.home();
+  u8x8.print(404);
 }
