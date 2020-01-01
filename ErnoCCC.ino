@@ -28,7 +28,7 @@ SwitchManager theButton;
 
 // ---- Define uC Pins ------------------------------------
 //
-#define theButtonPin     4
+#define theButtonPin  4
 #define stopPin       9
 #define ssrPin        6
 #define ledPwmPin     5
@@ -173,6 +173,10 @@ const uint8_t twoThirdsBottom[8] = {
 };
 
 void setup() {
+  pinMode(stopPin, INPUT_PULLUP);
+  pinMode(ssrPin, OUTPUT);
+  pinMode(ledPwmPin, OUTPUT);
+
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
 //  u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
@@ -182,23 +186,15 @@ void setup() {
   u8x8.setCursor(2,3);
   u8x8.print(":  :");
 
-  pinMode(stopPin, INPUT_PULLUP);
-
   u8x8.drawTile(12,7,2,lockBottom);
   unlockLock();
 
-//  u8g2.firstPage();
-//  do {
-//    u8g2.setFont(u8g2_font_10x20_mn);
-//    u8g2.setCursor(0, 16);
-//    u8g2.print("Hello");
-//  } while ( u8g2.nextPage() );
-  FreqMeasure.begin();
+  FreqMeasure.begin();  // This should go into the state machine and only start once the viewer is not stopped
 }
 
-long prevFrameCount  = -999;
-double sum=0;
-int count=0;
+long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
+double freqSum=0;
+int freqCount=0;
 float frequency;
 unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enough 
 
@@ -218,12 +214,12 @@ void loop() {
 
   if (FreqMeasure.available()) {
     // average several reading together
-    sum = sum + FreqMeasure.read();
-    count = count + 1;
-    if (count > 9) {
-      frequency = FreqMeasure.countToFrequency(sum / count);
-      sum = 0;
-      count = 0;
+    freqSum = freqSum + FreqMeasure.read();
+    freqCount = freqCount + 1;
+    if (freqCount > 9) {
+      frequency = FreqMeasure.countToFrequency(freqSum / freqCount);
+      freqSum = 0;
+      freqCount = 0;
     }
   }
 
