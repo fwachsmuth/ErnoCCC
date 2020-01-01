@@ -238,6 +238,8 @@ void drawState() {
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(1,6);
       u8x8.print("shot @     fps ");
+      fpsState = FPS_18;
+      drawCurrentFps();
       break;
     case STATE_RESET:
       u8x8.clearDisplay();
@@ -250,7 +252,7 @@ void drawState() {
       u8x8.drawTile(12,6,3,unlockedLockTop);
       fpsState = FPS_UNLOCKED;
       FreqMeasure.begin();
-      drawCurrentTime(true);
+      drawCurrentCustomFrequency();
   }
   prevPaintedState = state;
 }
@@ -284,6 +286,8 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
 }
 
 void drawCurrentFps() {
+  float fps = 18;
+  
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
   u8x8.setCursor(((state == STATE_RUNNING) ? 4 : 10),6);
   u8x8.print(" ");
@@ -293,26 +297,30 @@ void drawCurrentFps() {
     default:
       fpsState = FPS_18;
     case FPS_18:
-      playbackFps = 18;
       u8x8.print(18);
       break;
     case FPS_24:
-      playbackFps = 24;
+      fps = 24;
       u8x8.print(24);
       break;
     case FPS_25:
-      playbackFps = 25;
+      fps = 25;
       u8x8.print(25);
       break;
     case FPS_9:
-      playbackFps = 9;
+      fps = 9;
       u8x8.print(" 9");
       break;
     case FPS_16_2_3:
-      playbackFps = 16 + 2/3;
+      fps = 16 + 2/3;
       u8x8.print(16);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
+  }
+  if (state == STATE_RUNNING) playbackFps = fps;
+  else {
+    filmFps = fps;
+    drawCurrentTime(true);
   }
   prevPaintedFps = fpsState;
 }
@@ -330,7 +338,8 @@ void drawCurrentTime(bool forceDraw) {
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   
   currentFilmSecond = abs(currentFrameCount) / filmFps;
-  currentSubFrame = currentFrameCount % int(filmFps); 
+  if (filmFps != 16 + 2/3) currentSubFrame = currentFrameCount % int(filmFps);
+  else if (currentFilmSecond % 3 == 0)
   hours   = numberOfHours(currentFilmSecond);
   minutes = numberOfMinutes(currentFilmSecond);
   seconds = numberOfSeconds(currentFilmSecond);
