@@ -77,7 +77,7 @@ uint8_t prevPaintedHourDigit = 99;
 bool prevPaintedSign = false;
 
 
-const uint8_t unlockedTop[24] = {
+const uint8_t unlockedLockTop[24] = {
   0b00000000
 , 0b00000000
 , 0b10000000
@@ -106,7 +106,7 @@ const uint8_t unlockedTop[24] = {
 , 0b00000000
 };
 
-const uint8_t lockedTop[16] = {
+const uint8_t lockedLockTop[16] = {
   0b00000000
 , 0b00000000
 , 0b10000000
@@ -378,7 +378,7 @@ void drawCurrentTime() {
 
 void lockLock() {
   buttonState = BTN_STATE_LOCKED;
-  u8x8.drawTile(12,6,2,lockedTop);
+  u8x8.drawTile(12,6,2,lockedLockTop);
   u8x8.setCursor(14,6);
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
   u8x8.print(" ");
@@ -387,5 +387,5 @@ void lockLock() {
 
 void unlockLock() {
   buttonState = BTN_STATE_UNLOCKED;
-  u8x8.drawTile(12,6,3,unlockedTop);
+  u8x8.drawTile(12,6,3,unlockedLockTop);
 }
