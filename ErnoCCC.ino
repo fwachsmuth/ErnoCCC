@@ -17,7 +17,7 @@
 #include <FreqMeasure.h>
 
 #include <Arduino.h>
-#include <U8g2lib.h>          // Display Driver
+#include <U8x8lib.h>          // Display Driver
 #include <SwitchManager.h>    // Button Handling and Debouncing
 
 // Instantuiate some Objects
@@ -262,7 +262,7 @@ void drawState() {
       FreqMeasure.end();
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(1,6);
-      u8x8.print("shot @     fps");
+      u8x8.print(F("shot @     fps"));
       switch (int(filmFps)) {
         case 18:
           fpsState = FPS_18;
@@ -285,9 +285,9 @@ void drawState() {
       u8x8.clearDisplay();
       u8x8.setFont(u8x8_font_courB18_2x3_r);
       u8x8.setCursor(3,0);
-      u8x8.print("Reset");
+      u8x8.print(F("Reset"));
       u8x8.setCursor(0,3);
-      u8x8.print("counter?");
+      u8x8.print(F("counter?"));
       break;
     case STATE_RUNNING:
       checkMillisInLoop = false;
@@ -328,7 +328,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
         default:
           break;
       }
-    } else ignoreNextButtonPress = false;
+    } else ignoreNextButtonPress = false; 
   } else if (newState == LOW) {
     switch (state) {
       case STATE_STOPPED:
@@ -423,7 +423,7 @@ void drawCurrentTime(bool forceDraw) {
       forceDraw = true;
       prevPaintedSign = sign;
       u8x8.setCursor(((sign) ? 4 : 2),3);
-      u8x8.print(":  :  -");
+      u8x8.print(F(":  :  -"));
       // when tc is negative, do not render sub frame count, but a leading minus sign
     }
   }
