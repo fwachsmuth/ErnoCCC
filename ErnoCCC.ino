@@ -312,7 +312,7 @@ void drawCurrentFps() {
       u8x8.print(" 9");
       break;
     case FPS_16_2_3:
-      fps = 16 + 2/3;
+      fps = 50/3;
       u8x8.print(16);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
@@ -337,9 +337,19 @@ void drawCurrentCustomFrequency() {
 void drawCurrentTime(bool forceDraw) {
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   
-  currentFilmSecond = abs(currentFrameCount) / filmFps;
-  if (filmFps != 16 + 2/3) currentSubFrame = currentFrameCount % int(filmFps);
-  else if (currentFilmSecond % 3 == 0)
+  if (filmFps != 50/3) {
+    currentSubFrame = currentFrameCount % int(filmFps);
+    currentFilmSecond = abs(currentFrameCount) / filmFps;
+  } else {               // for 16 2/3 fps (Kalle magic)
+      currentSubFrame = currentFrameCount % 50;
+      currentFilmSecond = (abs(currentFrameCount) - currentSubFrame) * 3/50;
+    if (currentFrameCount % 50 >= 16) {
+      currentSubFrame = (currentSubFrame - 16) % 17;
+      currentFilmSecond++;
+      if (currentFrameCount % 50 > 32) currentFilmSecond++;
+    }
+  }
+
   hours   = numberOfHours(currentFilmSecond);
   minutes = numberOfMinutes(currentFilmSecond);
   seconds = numberOfSeconds(currentFilmSecond);
