@@ -14,6 +14,7 @@
  * 
  * Future Thoughts:
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
+ * - Synchronuous Mode via Impulses
  * - Add an accelerated rotary Encoder to target arbitrary film positions
  * - support electronic cutting lists to set all the marks
  * 
@@ -83,7 +84,7 @@ uint8_t prevPaintedFps = 0;
 #define STATE_RUNNING   16
 
 uint8_t state            = 0;
-uint8_t prevPaintedState = 255; // wtf?
+uint8_t prevPaintedState = 99;
 
 bool ignoreNextButtonPress   = false;
 unsigned long requiredMillis = 0;
@@ -225,7 +226,7 @@ float prevPaintedFrequency = -999;
 
 void loop() {
   theButton.check();
-  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {   // Why the >>?
+  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {   // Use MSBs to determine the run state
     state = STATE_STOPPED;
     drawState();
   } else if (digitalRead(stopPin) == HIGH && state >> 4 == 0) {
