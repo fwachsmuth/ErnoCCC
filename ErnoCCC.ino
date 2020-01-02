@@ -9,6 +9,7 @@
  * - Write Controller Calibration routine
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
  * - Control the Power LED (Stopped Mode)
+ * - Store last used shot/playback FPS in EEPROM (after n seconds or Mode change)
  * - 
  * 
  * Future Thoughts:
@@ -34,9 +35,9 @@
 
 #include <Arduino.h>
 #include <U8x8lib.h>          // Display Driver
-#include <SwitchManager.h>    // Button Handling and Debouncing
+#include <SwitchManager.h>    // Button Handling and Debouncing, http://www.gammon.com.au/switches
 
-// Instantuiate some Objects
+// Instantiate some Objects
 //
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);   
 Encoder myEnc(3, 2);
@@ -61,7 +62,7 @@ SwitchManager theButton;
 
 // ---- Running screen state machine --------------------------------------
 //
-#define FPS_UNLOCKED 0
+#define FPS_UNLOCKED     0    // ??
 
 // ---- Multiple state machines (^) -----------------------
 //
@@ -82,7 +83,7 @@ uint8_t prevPaintedFps = 0;
 #define STATE_RUNNING   16
 
 uint8_t state            = 0;
-uint8_t prevPaintedState = 255;
+uint8_t prevPaintedState = 255; // wtf?
 
 bool ignoreNextButtonPress   = false;
 unsigned long requiredMillis = 0;
@@ -109,8 +110,9 @@ uint8_t prevPaintedRightMinDigit = 99;
 uint8_t prevPaintedLeftMinDigit  = 99;
 uint8_t prevPaintedHourDigit     = 99;
 bool prevPaintedSign             = false;
-// Make some nice pixel gfx
 
+// Make some nice pixel gfx
+//
 const uint8_t unlockedLockTop[24] = {
   0b00000000
 , 0b00000000
@@ -223,7 +225,7 @@ float prevPaintedFrequency = -999;
 
 void loop() {
   theButton.check();
-  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {
+  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {   // Why the >>?
     state = STATE_STOPPED;
     drawState();
   } else if (digitalRead(stopPin) == HIGH && state >> 4 == 0) {
@@ -323,6 +325,10 @@ void drawState() {
 }
 
 void onButtonPress(const byte newState, const unsigned long interval, const byte whichPin) {
+  // newState will be LOW or HIGH (the is the state the switch is now in)
+  // interval will be how many ms between the opposite state and this one
+  // whichPin will be which pin caused this change (so you can share the function amongst multiple switches)
+
   if (newState == HIGH && interval < 1500) {
     if (!ignoreNextButtonPress) {
       switch (state) {
@@ -409,7 +415,7 @@ void drawCurrentCustomFrequency() {
   u8x8.print(frequency);
 }
 
-void drawCurrentTime(bool forceDraw) {
+void drawCurrentTime(bool forceFullRedraw) {
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   
   if (filmFps != 50/3) {
@@ -432,11 +438,11 @@ void drawCurrentTime(bool forceDraw) {
 
   // Handle negative frame counts and time nicely
   //
-  if (rightSecDigit == 0 || forceDraw) {
+  if (rightSecDigit == 0 || forceFullRedraw) {
     if (currentFrameCount < 0) sign = true;
     else sign = false;
-    if (sign != prevPaintedSign || forceDraw) {
-      forceDraw = true;
+    if (sign != prevPaintedSign || forceFullRedraw) {
+      forceFullRedraw = true;
       prevPaintedSign = sign;
       u8x8.setCursor(((sign) ? 4 : 2),3);
       u8x8.print(F(":  :  -"));
@@ -446,27 +452,27 @@ void drawCurrentTime(bool forceDraw) {
 
   // Only paint the glyphs that have changed, this improves the display framerate a lot
   //
-  if (rightSecDigit != prevPaintedRightSecDigit || forceDraw) {
+  if (rightSecDigit != prevPaintedRightSecDigit || forceFullRedraw) {
     prevPaintedRightSecDigit = rightSecDigit;
     u8x8.setCursor(12 + (sign ? 2 : 0),3);
     u8x8.print(rightSecDigit);
     leftSecDigit = seconds / 10;
-    if (leftSecDigit != prevPaintedLeftSecDigit || forceDraw) {
+    if (leftSecDigit != prevPaintedLeftSecDigit || forceFullRedraw) {
       prevPaintedLeftSecDigit = leftSecDigit;
       u8x8.setCursor(10 + (sign ? 2 : 0),3);
       u8x8.print(leftSecDigit);
       rightMinDigit = minutes % 10;
-      if (rightMinDigit != prevPaintedRightMinDigit || forceDraw) {
+      if (rightMinDigit != prevPaintedRightMinDigit || forceFullRedraw) {
         prevPaintedRightMinDigit = rightMinDigit;
         u8x8.setCursor(6 + (sign ? 2 : 0),3);
         u8x8.print(rightMinDigit);
         leftMinDigit = minutes / 10;
-        if (leftMinDigit != prevPaintedLeftMinDigit || forceDraw) {
+        if (leftMinDigit != prevPaintedLeftMinDigit || forceFullRedraw) {
           prevPaintedLeftMinDigit = leftMinDigit;
           u8x8.setCursor(4 + (sign ? 2 : 0),3);
           u8x8.print(leftMinDigit);
           hourDigit = hours % 10;
-          if (hourDigit != prevPaintedHourDigit || forceDraw) {
+          if (hourDigit != prevPaintedHourDigit || forceFullRedraw) {
             prevPaintedHourDigit = hourDigit;
             u8x8.setCursor(0 + (sign ? 2 : 0),3);
             u8x8.print(hourDigit);
@@ -475,7 +481,7 @@ void drawCurrentTime(bool forceDraw) {
       }
     }
   }
-  if (!forceDraw) {
+  if (!forceFullRedraw) {
     if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
     else u8x8.setCursor(12,0);
     u8x8.print(" ");
