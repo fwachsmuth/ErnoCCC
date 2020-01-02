@@ -424,7 +424,7 @@ void drawCurrentFps(bool redrawCurrentTime) {
   if (state == STATE_RUNNING) playbackFps = fps;
   else {
     filmFps = fps;
-    if (redrawCurrentTime && (currentFrameCount >= filmFps || currentFrameCount >= prevFilmFps)) drawCurrentTime(true);
+    if (redrawCurrentTime && (currentFrameCount >= filmFps || currentFrameCount >= prevFilmFps || prevFilmFps == 9 || filmFps == 9)) drawCurrentTime(true);
   }
   prevPaintedFps = fpsState;
 }
