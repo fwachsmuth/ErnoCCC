@@ -35,6 +35,7 @@
 #include <FreqMeasure.h>
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <U8x8lib.h>          // Display Driver
 #include <SwitchManager.h>    // Button Handling and Debouncing, http://www.gammon.com.au/switches
 
@@ -88,17 +89,20 @@ uint8_t prevPaintedFps = 0;
 uint8_t state            = 0;
 uint8_t prevPaintedState = 99;
 
-bool ignoreNextButtonPress   = false;
-unsigned long requiredMillis = 0;
-bool checkMillisInLoop       = 0;
-unsigned long totalSeconds   = 0;
-long currentFrameCount;
-float filmFps                = 18;
-float playbackFps            = 18;
-uint8_t hours                = 0;
-uint8_t minutes              = 0;
-uint8_t seconds              = 0;
-uint8_t currentSubFrame      = 0;
+bool ignoreNextButtonPress     = false;
+unsigned long requiredMillis   = 0;
+unsigned long writeToEEPROM    = 0;
+bool checkRequiredMillisInLoop = false;
+bool checkWriteToEEPROMInLoop  = false;
+unsigned long totalSeconds     = 0;
+long currentFrameCount         = 0;
+float filmFps                  = 18;
+float playbackFps              = 18;
+float fps                      = 18;
+uint8_t hours                  = 0;
+uint8_t minutes                = 0;
+uint8_t seconds                = 0;
+uint8_t currentSubFrame        = 0;
 
 uint8_t rightSecDigit = 0;
 uint8_t leftSecDigit  = 0;
@@ -214,6 +218,10 @@ void setup() {
   u8x8.begin();
   //u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
   //u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
+
+  filmFps = readEEPROMValue(0);
+  playbackFps = readEEPROMValue(1);
+  
   drawState();
 }
 
@@ -247,19 +255,19 @@ void loop() {
     }
   }
   
-  if (checkMillisInLoop) {
+  if (checkRequiredMillisInLoop) {
     switch (state) {
       case STATE_STOPPED:
-        if (digitalRead(theButtonPin) == HIGH) checkMillisInLoop = false;
+        if (digitalRead(theButtonPin) == HIGH) checkRequiredMillisInLoop = false;
         else if (digitalRead(theButtonPin) == LOW && millis() >= requiredMillis) {
-          checkMillisInLoop = false;
+          checkRequiredMillisInLoop = false;
           state = STATE_RESET;
           drawState();
         }
         break;
       case STATE_RESET:
         if (millis() >= requiredMillis) {
-          checkMillisInLoop = false;
+          checkRequiredMillisInLoop = false;
           state = STATE_STOPPED;
           drawState();
         }
@@ -267,6 +275,11 @@ void loop() {
       default:
         break;
     }
+  }
+
+  if (checkWriteToEEPROMInLoop && millis() >= writeToEEPROM) {
+    checkWriteToEEPROMInLoop = false;
+    EEPROM.write(isRunning, fps);
   }
 
   if (FreqMeasure.available()) {
@@ -283,7 +296,7 @@ void loop() {
 }
 
 void drawState() {
-  checkMillisInLoop = false;
+  checkRequiredMillisInLoop = false;
   if (!wasCounterVisible) {
     u8x8.clearDisplay();
     drawCurrentTime(true);
@@ -298,23 +311,12 @@ void drawState() {
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(1,6);
       u8x8.print(F("shot @     fps"));
-      switch (int(filmFps)) {
-        case 18:
-          fpsState = FPS_18;
-          break;
-        case 24:
-          fpsState = FPS_24;
-          break;
-        case 25:
-          fpsState = FPS_25;
-          break;
-        case 9:
-          fpsState = FPS_9;
-          break;
-        case 16:
-          fpsState = FPS_16_2_3;
+      fpsState = getFpsState(filmFps);
+      drawCurrentFps(false, false);
+      if (checkWriteToEEPROMInLoop) {
+        checkWriteToEEPROMInLoop = false;
+        EEPROM.write(1, playbackFps);
       }
-      drawCurrentFps(false);
       break;
     case STATE_RESET:
       u8x8.clearDisplay();
@@ -327,10 +329,10 @@ void drawState() {
       u8x8.setCursor(1,6);
       u8x8.print(F("push = confirm"));
       requiredMillis = millis() + 4000;
-      checkMillisInLoop = true;
+      checkRequiredMillisInLoop = true;
       break;
     case STATE_RUNNING:
-      checkMillisInLoop = false;
+      checkRequiredMillisInLoop = false;
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(8,6);
       u8x8.print("fps");
@@ -342,6 +344,10 @@ void drawState() {
       fpsState = FPS_UNLOCKED;
       FreqMeasure.begin();
       drawCurrentCustomFrequency();
+      if (checkWriteToEEPROMInLoop) {
+        checkWriteToEEPROMInLoop = false;
+        EEPROM.write(0, filmFps);
+      }
   }
   prevPaintedState = state;
 }
@@ -362,13 +368,14 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
             u8x8.setFont(u8x8_font_7x14B_1x2_n);
             u8x8.setCursor(5,6);
             u8x8.print("  ");
+            fpsState = getFpsState(playbackFps);
             FreqMeasure.end();
-          }
-          drawCurrentFps(false);
+            drawCurrentFps(false, false);
+          } else drawCurrentFps(false, true);
           break;
         case STATE_STOPPED:
           fpsState++;
-          drawCurrentFps(true);
+          drawCurrentFps(true, true);
         default:
           break;
       }
@@ -377,7 +384,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
     switch (state) {
       case STATE_STOPPED:
         requiredMillis = millis() + 1500;
-        checkMillisInLoop = true;
+        checkRequiredMillisInLoop = true;
         break;
       case STATE_RESET:
         myEnc.write(0);
@@ -388,8 +395,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
   }
 }
 
-void drawCurrentFps(bool redrawCurrentTime) {
-  float fps = 18;
+void drawCurrentFps(const bool redrawCurrentTime, const bool updateEEPROM) {
   float prevFilmFps = filmFps;
   
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
@@ -401,6 +407,7 @@ void drawCurrentFps(bool redrawCurrentTime) {
     default:
       fpsState = FPS_18;
     case FPS_18:
+      fps = 18;
       u8x8.print(18);
       break;
     case FPS_24:
@@ -427,6 +434,10 @@ void drawCurrentFps(bool redrawCurrentTime) {
     if (redrawCurrentTime && (currentFrameCount >= filmFps || currentFrameCount >= prevFilmFps || prevFilmFps == 9 || filmFps == 9)) drawCurrentTime(true);
   }
   prevPaintedFps = fpsState;
+  if (updateEEPROM) {
+    writeToEEPROM = millis() + 10000;
+    checkWriteToEEPROMInLoop = true;
+  }
 }
 
 void drawCurrentCustomFrequency() {
@@ -523,6 +534,23 @@ void drawCurrentTime(bool forceFullRedraw) {
     u8x8.print(currentSubFrame);
   } 
  
+}
+
+uint8_t getFpsState(float inputFps) {
+  switch (int(inputFps)) {
+    case 18: return FPS_18;
+    case 24: return FPS_24;
+    case 25: return FPS_25;
+    case 9:  return FPS_9;
+    case 16: return FPS_16_2_3;
+  }
+}
+
+uint8_t readEEPROMValue(uint8_t address) {
+  uint8_t value = 0;
+  value = EEPROM.read(address);
+  if (value == 0) return 1;
+  else return value;
 }
 
 void notFound() {
