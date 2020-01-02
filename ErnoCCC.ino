@@ -63,7 +63,7 @@ SwitchManager theButton;
 
 // ---- Running screen state machine --------------------------------------
 //
-#define FPS_UNLOCKED     0    // ??
+#define FPS_UNLOCKED     0
 
 // ---- Multiple state machines (^) -----------------------
 //
@@ -76,12 +76,14 @@ SwitchManager theButton;
 uint8_t fpsState       = 0;
 uint8_t prevPaintedFps = 0;
 
-
 // ---- Display state machine ----------------------------------
 //
-#define STATE_STOPPED   0
-#define STATE_RESET     1
-#define STATE_RUNNING   16
+#define STATE_STOPPED     0     // 0x00       1st hexadecimal number = is running
+#define STATE_RESET       1     // 0x01       state >> 4             = is running
+#define STATE_RUNNING     16    // 0x10
+
+#define isRunning         (state >> 4)
+#define wasCounterVisible (prevPaintedState % 16 == 0)
 
 uint8_t state            = 0;
 uint8_t prevPaintedState = 99;
@@ -226,31 +228,44 @@ float prevPaintedFrequency = -999;
 
 void loop() {
   theButton.check();
-  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {   // Use MSBs to determine the run state
+  if (digitalRead(stopPin) == LOW && isRunning == 1) {   // Use MSBs to determine the run state
     state = STATE_STOPPED;
     drawState();
-  } else if (digitalRead(stopPin) == HIGH && state >> 4 == 0) {
+  } else if (digitalRead(stopPin) == HIGH && isRunning == 0) {
     state = STATE_RUNNING;
     drawState();
   }
   
   currentFrameCount = myEnc.read() / 4;
-  if (currentFrameCount != prevFrameCount && state % 16 == 0) {
-    prevFrameCount = currentFrameCount;
-    drawCurrentTime(false);
+  if (currentFrameCount != prevFrameCount) {
+    if (wasCounterVisible) {
+      prevFrameCount = currentFrameCount;
+      drawCurrentTime(false);
+    } else {
+      state = STATE_STOPPED;
+      drawState();
+    }
   }
+  
   if (checkMillisInLoop) {
-    if (digitalRead(theButtonPin) == HIGH) checkMillisInLoop = false;
-    else if (digitalRead(theButtonPin) == LOW && millis() >= requiredMillis) {
-      checkMillisInLoop = false;
-      switch (state) {
-        case STATE_STOPPED:
+    switch (state) {
+      case STATE_STOPPED:
+        if (digitalRead(theButtonPin) == HIGH) checkMillisInLoop = false;
+        else if (digitalRead(theButtonPin) == LOW && millis() >= requiredMillis) {
+          checkMillisInLoop = false;
           state = STATE_RESET;
           drawState();
-          break;
-        default:
-          break;
-      }
+        }
+        break;
+      case STATE_RESET:
+        if (millis() >= requiredMillis) {
+          checkMillisInLoop = false;
+          state = STATE_STOPPED;
+          drawState();
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -268,7 +283,8 @@ void loop() {
 }
 
 void drawState() {
-  if (prevPaintedState % 16 != 0) {
+  checkMillisInLoop = false;
+  if (!wasCounterVisible) {
     u8x8.clearDisplay();
     drawCurrentTime(true);
   }
@@ -307,6 +323,11 @@ void drawState() {
       u8x8.print(F("Reset"));
       u8x8.setCursor(0,3);
       u8x8.print(F("counter?"));
+      u8x8.setFont(u8x8_font_7x14B_1x2_r);
+      u8x8.setCursor(1,6);
+      u8x8.print(F("push = confirm"));
+      requiredMillis = millis() + 4000;
+      checkMillisInLoop = true;
       break;
     case STATE_RUNNING:
       checkMillisInLoop = false;
@@ -330,7 +351,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
   // interval will be how many ms between the opposite state and this one
   // whichPin will be which pin caused this change (so you can share the function amongst multiple switches)
 
-  if (newState == HIGH && interval < 1500) {
+  if (newState == HIGH && interval < 1500) { //on button release
     if (!ignoreNextButtonPress) {
       switch (state) {
         case STATE_RUNNING:
@@ -352,7 +373,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
           break;
       }
     } else ignoreNextButtonPress = false; 
-  } else if (newState == LOW) {
+  } else if (newState == LOW) { //on button press
     switch (state) {
       case STATE_STOPPED:
         requiredMillis = millis() + 1500;
@@ -369,6 +390,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
 
 void drawCurrentFps(bool redrawCurrentTime) {
   float fps = 18;
+  float prevFilmFps = filmFps;
   
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
   u8x8.setCursor(((state == STATE_RUNNING) ? 4 : 10),6);
@@ -402,7 +424,7 @@ void drawCurrentFps(bool redrawCurrentTime) {
   if (state == STATE_RUNNING) playbackFps = fps;
   else {
     filmFps = fps;
-    if (redrawCurrentTime) drawCurrentTime(true);
+    if (redrawCurrentTime && (currentFrameCount >= filmFps || currentFrameCount >= prevFilmFps)) drawCurrentTime(true);
   }
   prevPaintedFps = fpsState;
 }
@@ -446,8 +468,11 @@ void drawCurrentTime(bool forceFullRedraw) {
       forceFullRedraw = true;
       prevPaintedSign = sign;
       u8x8.setCursor(((sign) ? 4 : 2),3);
-      u8x8.print(F(":  :  -"));
-      // when tc is negative, do not render sub frame count, but a leading minus sign
+      u8x8.print(F(":  :  -"));    // when tc is negative, do not render sub frame count, but a leading minus sign
+      if (!sign && filmFps == 9) {
+        u8x8.drawTile(15,3,1,emptyTile);
+        u8x8.drawTile(15,4,1,emptyTile);
+      }
     }
   }
 
@@ -494,7 +519,7 @@ void drawCurrentTime(bool forceFullRedraw) {
   if (currentFrameCount >= 0) {
     u8x8.setFont(u8x8_font_7x14B_1x2_n);
     u8x8.setCursor(14,3);
-    if (currentSubFrame < 10) u8x8.print("0");
+    if (currentSubFrame < 10 && filmFps != 9) u8x8.print(0);
     u8x8.print(currentSubFrame);
   } 
  
