@@ -1,4 +1,23 @@
 /*
+ * ***** Erno Crystal Counter Controller written in 2019, 2020 by Friedemann and Kalle Wachsmuth *****
+ * 
+ * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
+ * 
+ * To Do: 
+ * - Create Timers for the reference pulses
+ * - Control the DC motor (via DAC/FET?)
+ * - Write Controller Calibration routine
+ * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
+ * - Control the Power LED (Stopped Mode)
+ * - 
+ * 
+ * Future Thoughts:
+ * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
+ * - Add an accelerated rotary Encoder to target arbitrary film positions
+ * - support electronic cutting lists to set all the marks
+ * 
+ * Notes: 
+ * 
  * - D5 Pullup
  * - D9 STOP auswerten
  * - LED Ports down
@@ -7,9 +26,6 @@
  * - Button an D4 abfragen
  * - D5 LED PWM
  * - D10 for a Mosfet or PWM to the LDR-LED?
- * 
- * Schematics:
- * - Fiducials
  * 
  */
 
