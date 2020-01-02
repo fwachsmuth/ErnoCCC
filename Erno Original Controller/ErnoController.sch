@@ -1,0 +1,297 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:CP C1
+U 1 1 5DFAF51F
+P 4350 2550
+F 0 "C1" H 4400 2650 50  0000 L CNN
+F 1 "100u" H 4400 2450 50  0000 L CNN
+F 2 "" H 4388 2400 50  0001 C CNN
+F 3 "~" H 4350 2550 50  0001 C CNN
+	1    4350 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 5DFB056E
+P 5200 3300
+F 0 "R2" H 5130 3254 50  0000 R CNN
+F 1 "100" H 5130 3345 50  0000 R CNN
+F 2 "" V 5130 3300 50  0001 C CNN
+F 3 "~" H 5200 3300 50  0001 C CNN
+	1    5200 3300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R3
+U 1 1 5DFB1CFE
+P 6450 1850
+F 0 "R3" H 6380 1804 50  0000 R CNN
+F 1 "1k" H 6380 1895 50  0000 R CNN
+F 2 "" V 6380 1850 50  0001 C CNN
+F 3 "~" H 6450 1850 50  0001 C CNN
+	1    6450 1850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Motor:Motor_DC M1
+U 1 1 5DFCE720
+P 8900 2000
+F 0 "M1" H 9058 1996 50  0000 L CNN
+F 1 "Motor_DC" H 9058 1905 50  0000 L CNN
+F 2 "" H 8900 1910 50  0001 C CNN
+F 3 "~" H 8900 1910 50  0001 C CNN
+	1    8900 2000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	3150 1450 4350 1450
+Wire Wire Line
+	4350 2400 4350 1450
+Connection ~ 4350 1450
+Wire Wire Line
+	4350 2700 4350 3650
+Wire Wire Line
+	4350 3650 3150 3650
+Wire Wire Line
+	5200 1450 4350 1450
+Connection ~ 4350 3650
+Connection ~ 5200 1450
+$Comp
+L Simulation_SPICE:DIODE D2
+U 1 1 5DFB81F7
+P 6450 2350
+F 0 "D2" V 6404 2430 50  0000 L CNN
+F 1 "DIODE" V 6495 2430 50  0000 L CNN
+F 2 "" H 6450 2350 50  0001 C CNN
+F 3 "~" H 6450 2350 50  0001 C CNN
+F 4 "Y" H 6450 2350 50  0001 L CNN "Spice_Netlist_Enabled"
+F 5 "V" H 6450 2350 50  0001 L CNN "Spice_Primitive"
+	1    6450 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Q_NPN_ECB Q1
+U 1 1 5DFB2155
+P 6350 3150
+F 0 "Q1" H 6541 3196 50  0000 L CNN
+F 1 "2SC1162" H 6541 3105 50  0000 L CNN
+F 2 "" H 6550 3250 50  0001 C CNN
+F 3 "~" H 6350 3150 50  0001 C CNN
+	1    6350 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP C2
+U 1 1 5DFB0053
+P 7050 2050
+F 0 "C2" H 7100 2150 50  0000 L CNN
+F 1 "100u" H 7100 1950 50  0000 L CNN
+F 2 "" H 7088 1900 50  0001 C CNN
+F 3 "~" H 7050 2050 50  0001 C CNN
+	1    7050 2050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_DPDT SW2
+U 1 1 5E001E00
+P 8150 2050
+F 0 "SW2" H 8150 2535 50  0000 C CNN
+F 1 "SW_Push_DPDT" H 8150 2444 50  0000 C CNN
+F 2 "" H 8150 2250 50  0001 C CNN
+F 3 "~" H 8150 2250 50  0001 C CNN
+	1    8150 2050
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8900 1800 8900 1750
+Wire Wire Line
+	8900 1750 8350 1750
+Wire Wire Line
+	8350 1750 8350 1850
+Wire Wire Line
+	8900 2300 8900 2350
+Wire Wire Line
+	8900 2350 8350 2350
+Wire Wire Line
+	8350 2350 8350 2250
+Wire Wire Line
+	7900 2150 7950 2150
+Wire Wire Line
+	7950 1750 7800 1750
+Wire Wire Line
+	7800 1450 7800 1750
+Wire Wire Line
+	6450 1700 6450 1450
+Connection ~ 6450 1450
+Wire Wire Line
+	6450 1450 7050 1450
+Wire Wire Line
+	6450 1450 5200 1450
+Wire Wire Line
+	7950 2350 7800 2350
+Wire Wire Line
+	7550 2700 7550 1950
+Wire Wire Line
+	7950 1950 7900 1950
+Wire Wire Line
+	7900 2150 7900 1950
+Connection ~ 7900 1950
+Wire Wire Line
+	7900 1950 7550 1950
+Wire Wire Line
+	7800 1750 7800 2350
+Connection ~ 7800 1750
+Wire Wire Line
+	6450 2500 6450 2700
+Wire Wire Line
+	7050 2200 7050 2700
+Connection ~ 7050 2700
+Wire Wire Line
+	7050 2700 7550 2700
+Wire Wire Line
+	5200 3450 5200 3650
+Wire Wire Line
+	5200 3650 4350 3650
+Wire Wire Line
+	7050 1450 7800 1450
+Wire Wire Line
+	3150 2250 3150 1450
+Wire Wire Line
+	3150 2850 3150 3650
+$Comp
+L Diode_Bridge:B40C5000-3x00A D1
+U 1 1 5DFACEBD
+P 3150 2550
+F 0 "D1" V 3196 2206 50  0000 R CNN
+F 1 "B40C5000-3x00A" V 3105 2206 50  0000 R CNN
+F 2 "Diode_THT:Diode_Bridge_32.0x5.6x17.0mm_P10.0mm_P7.5mm" H 3300 2675 50  0001 L CNN
+F 3 "https://diotec.com/tl_files/diotec/files/pdf/datasheets/b40c500033" H 3150 2550 50  0001 C CNN
+	1    3150 2550
+	0    -1   -1   0   
+$EndComp
+Connection ~ 7050 1450
+Wire Wire Line
+	7050 1450 7050 1900
+$Comp
+L Switch:SW_Push_Open SW1
+U 1 1 5DFBE622
+P 5200 2200
+F 0 "SW1" V 5154 2277 50  0000 L CNN
+F 1 "SW_Push_Open" V 5245 2277 50  0000 L CNN
+F 2 "" H 5200 2400 50  0001 C CNN
+F 3 "~" H 5200 2400 50  0001 C CNN
+	1    5200 2200
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 5DFB1581
+P 5200 1750
+F 0 "R1" H 5270 1796 50  0000 L CNN
+F 1 "1k2" H 5270 1705 50  0000 L CNN
+F 2 "" V 5130 1750 50  0001 C CNN
+F 3 "~" H 5200 1750 50  0001 C CNN
+	1    5200 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7050 2700 6450 2700
+Wire Wire Line
+	6450 2000 6450 2100
+$Comp
+L Device:Q_PNP_ECB Q2
+U 1 1 5DFB4B35
+P 5800 2500
+F 0 "Q2" H 5991 2454 50  0000 L CNN
+F 1 "2SA844" H 5991 2545 50  0000 L CNN
+F 2 "" H 6000 2600 50  0001 C CNN
+F 3 "~" H 5800 2500 50  0001 C CNN
+	1    5800 2500
+	1    0    0    1   
+$EndComp
+Connection ~ 6450 2700
+Wire Wire Line
+	6450 2950 6450 2700
+Wire Wire Line
+	6450 3350 6450 3650
+Wire Wire Line
+	6450 3650 5200 3650
+Connection ~ 5200 3650
+Wire Wire Line
+	5900 2100 6450 2100
+Connection ~ 6450 2100
+Wire Wire Line
+	6450 2100 6450 2200
+Wire Wire Line
+	5900 2750 5900 3150
+Wire Wire Line
+	5900 3150 6150 3150
+Connection ~ 5200 2950
+Wire Wire Line
+	5200 2950 5200 3150
+Wire Wire Line
+	5200 1600 5200 1450
+Text Label 5250 2950 0    50   ~ 0
+blue
+Wire Wire Line
+	5200 2950 5250 2950
+$Comp
+L Device:R_POT RV1
+U 1 1 5DFBAA46
+P 5200 2700
+F 0 "RV1" H 5250 3000 50  0000 R CNN
+F 1 "10k" H 5250 2900 50  0000 R CNN
+F 2 "" H 5200 2700 50  0001 C CNN
+F 3 "~" H 5200 2700 50  0001 C CNN
+	1    5200 2700
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5050 2700 5050 2800
+Wire Wire Line
+	5050 2800 5200 2800
+Wire Wire Line
+	5350 2800 5350 2700
+Wire Wire Line
+	5200 2800 5200 2950
+Connection ~ 5200 2800
+Wire Wire Line
+	5200 2800 5350 2800
+Wire Wire Line
+	5200 2550 5200 2500
+Wire Wire Line
+	5600 2500 5200 2500
+Connection ~ 5200 2500
+Wire Wire Line
+	5200 2500 5200 2450
+Wire Wire Line
+	5900 2300 5900 2100
+Text Label 5250 2450 0    50   ~ 0
+orange
+Wire Wire Line
+	5250 2450 5200 2450
+Connection ~ 5200 2450
+Wire Wire Line
+	5200 2450 5200 2400
+Wire Wire Line
+	5200 1900 5200 2000
+Text Label 5250 2000 0    50   ~ 0
+green
+Wire Wire Line
+	5250 2000 5200 2000
+Connection ~ 5200 2000
+$EndSCHEMATC
