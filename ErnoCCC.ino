@@ -55,8 +55,8 @@ SwitchManager theButton;
 #define FPS_9            4
 #define FPS_16_2_3       5
 
-uint8_t fpsState = 0;
-uint8_t prevPaintedFps     = 0;
+uint8_t fpsState       = 0;
+uint8_t prevPaintedFps = 0;
 
 
 // ---- Display state machine ----------------------------------
@@ -66,16 +66,19 @@ uint8_t prevPaintedFps     = 0;
 #define STATE_RUNNING   16
 
 uint8_t state            = 0;
-uint8_t prevPaintedState = 99;
+uint8_t prevPaintedState = 255;
 
-unsigned long totalSeconds = 0;
+bool ignoreNextButtonPress   = false;
+unsigned long requiredMillis = 0;
+bool checkMillisInLoop       = 0;
+unsigned long totalSeconds   = 0;
 long currentFrameCount;
-float filmFps              = 18;
-float playbackFps          = 18;
-uint8_t hours              = 0;
-uint8_t minutes            = 0;
-uint8_t seconds            = 0;
-uint8_t currentSubFrame    = 0;
+float filmFps                = 18;
+float playbackFps            = 18;
+uint8_t hours                = 0;
+uint8_t minutes              = 0;
+uint8_t seconds              = 0;
+uint8_t currentSubFrame      = 0;
 
 uint8_t rightSecDigit = 0;
 uint8_t leftSecDigit  = 0;
@@ -190,6 +193,7 @@ void setup() {
   u8x8.begin();
   //u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
   //u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
+  drawState();
 }
 
 long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
@@ -203,16 +207,33 @@ float prevPaintedFrequency = -999;
 
 void loop() {
   theButton.check();
-  if (digitalRead(stopPin) == LOW && state >> 4 == 1)  state = STATE_STOPPED;
-  if (digitalRead(stopPin) == HIGH && state >> 4 == 0) state = STATE_RUNNING;
+  if (digitalRead(stopPin) == LOW && state >> 4 == 1) {
+    state = STATE_STOPPED;
+    drawState();
+  } else if (digitalRead(stopPin) == HIGH && state >> 4 == 0) {
+    state = STATE_RUNNING;
+    drawState();
+  }
   
   currentFrameCount = myEnc.read() / 4;
-  if (currentFrameCount != prevFrameCount) {
+  if (currentFrameCount != prevFrameCount && state % 16 == 0) {
     prevFrameCount = currentFrameCount;
     drawCurrentTime(false);
   }
-
-  if (state != prevPaintedState) drawState();
+  if (checkMillisInLoop) {
+    if (digitalRead(theButtonPin) == HIGH) checkMillisInLoop = false;
+    else if (digitalRead(theButtonPin) == LOW && millis() >= requiredMillis) {
+      checkMillisInLoop = false;
+      switch (state) {
+        case STATE_STOPPED:
+          state = STATE_RESET;
+          drawState();
+          break;
+        default:
+          break;
+      }
+    }
+  }
 
   if (FreqMeasure.available()) {
     // average several reading together
@@ -224,30 +245,58 @@ void loop() {
       freqCount = 0;
     }
     if (frequency != prevPaintedFrequency && state == STATE_RUNNING) drawCurrentCustomFrequency();
-  } else if (fpsState != prevPaintedFps && state == STATE_RUNNING) drawCurrentFps();
+  }
 }
 
 void drawState() {
+  if (prevPaintedState % 16 != 0) {
+    u8x8.clearDisplay();
+    drawCurrentTime(true);
+  }
   switch (state) {
     default:
       notFound();
       break;
     case STATE_STOPPED:
+      if (prevPaintedState == STATE_RESET) ignoreNextButtonPress = true;
       FreqMeasure.end();
-      drawCurrentTime(true);
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(1,6);
-      u8x8.print("shot @     fps ");
-      fpsState = FPS_18;
-      drawCurrentFps();
+      u8x8.print("shot @     fps");
+      switch (int(filmFps)) {
+        case 18:
+          fpsState = FPS_18;
+          break;
+        case 24:
+          fpsState = FPS_24;
+          break;
+        case 25:
+          fpsState = FPS_25;
+          break;
+        case 9:
+          fpsState = FPS_9;
+          break;
+        case 16:
+          fpsState = FPS_16_2_3;
+      }
+      drawCurrentFps(false);
       break;
     case STATE_RESET:
       u8x8.clearDisplay();
+      u8x8.setFont(u8x8_font_courB18_2x3_r);
+      u8x8.setCursor(3,0);
+      u8x8.print("Reset");
+      u8x8.setCursor(0,3);
+      u8x8.print("counter?");
       break;
     case STATE_RUNNING:
+      checkMillisInLoop = false;
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
+      u8x8.setCursor(8,6);
+      u8x8.print("fps");
       u8x8.setCursor(1,6);
-      u8x8.print("       fps    ");
+      u8x8.print(" ");
+      u8x8.drawTile(14,7,1,emptyTile);
       u8x8.drawTile(12,7,2,lockBottom);
       u8x8.drawTile(12,6,3,unlockedLockTop);
       fpsState = FPS_UNLOCKED;
@@ -258,34 +307,44 @@ void drawState() {
 }
 
 void onButtonPress(const byte newState, const unsigned long interval, const byte whichPin) {
-//  if (interval >= 1000) break; // This would detect a long press
   if (newState == HIGH && interval < 1500) {
+    if (!ignoreNextButtonPress) {
+      switch (state) {
+        case STATE_RUNNING:
+          fpsState++;
+          if (fpsState == FPS_UNLOCKED + 1) {
+            u8x8.drawTile(12,6,2,lockedLockTop);
+            u8x8.drawTile(14,6,1,emptyTile);
+            u8x8.setFont(u8x8_font_7x14B_1x2_n);
+            u8x8.setCursor(5,6);
+            u8x8.print("  ");
+            FreqMeasure.end();
+          }
+          drawCurrentFps(false);
+          break;
+        case STATE_STOPPED:
+          fpsState++;
+          drawCurrentFps(true);
+        default:
+          break;
+      }
+    } else ignoreNextButtonPress = false;
+  } else if (newState == LOW) {
     switch (state) {
-      case STATE_RUNNING:
-        fpsState++;
-        if (fpsState == FPS_UNLOCKED + 1) {
-          u8x8.drawTile(12,6,2,lockedLockTop);
-          u8x8.drawTile(14,6,1,emptyTile);
-          u8x8.setFont(u8x8_font_7x14B_1x2_n);
-          u8x8.setCursor(5,6);
-          u8x8.print("  ");
-          FreqMeasure.end();
-          drawCurrentFps();
-        } else drawCurrentFps();
       case STATE_STOPPED:
-        fpsState++;
-        drawCurrentFps();
+        requiredMillis = millis() + 1500;
+        checkMillisInLoop = true;
         break;
-      default:
-        break;
+      case STATE_RESET:
+        myEnc.write(0);
+        currentFrameCount = 0;
+        state = STATE_STOPPED;
+        drawState();
     }
-  } else if (newState == HIGH && interval >= 1500 && state == STATE_STOPPED) {
-    state = STATE_RESET;
-    drawState();
   }
 }
 
-void drawCurrentFps() {
+void drawCurrentFps(bool redrawCurrentTime) {
   float fps = 18;
   
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
@@ -320,7 +379,7 @@ void drawCurrentFps() {
   if (state == STATE_RUNNING) playbackFps = fps;
   else {
     filmFps = fps;
-    drawCurrentTime(true);
+    if (redrawCurrentTime) drawCurrentTime(true);
   }
   prevPaintedFps = fpsState;
 }
@@ -400,11 +459,12 @@ void drawCurrentTime(bool forceDraw) {
       }
     }
   }
-
-  if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
-  else u8x8.setCursor(12,0);
-  u8x8.print(" ");
-  u8x8.print(currentFrameCount);
+  if (!forceDraw) {
+    if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
+    else u8x8.setCursor(12,0);
+    u8x8.print(" ");
+    u8x8.print(currentFrameCount);
+  }
 
   // Print current Subframe for SMPTE compliance
   //
