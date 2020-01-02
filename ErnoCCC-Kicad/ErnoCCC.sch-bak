@@ -176,7 +176,7 @@ L Device:R R9
 U 1 1 5E13AACF
 P 2500 3700
 F 0 "R9" V 2450 3850 50  0000 C CNN
-F 1 "10k" V 2500 3700 50  0000 C CNN
+F 1 "2k2" V 2500 3700 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric" V 2430 3700 50  0001 C CNN
 F 3 "~" H 2500 3700 50  0001 C CNN
 	1    2500 3700
@@ -187,7 +187,7 @@ L Device:R R10
 U 1 1 5E13D1D7
 P 2500 3800
 F 0 "R10" V 2450 3950 50  0000 C CNN
-F 1 "10k" V 2500 3800 50  0000 C CNN
+F 1 "2k2" V 2500 3800 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric" V 2430 3800 50  0001 C CNN
 F 3 "~" H 2500 3800 50  0001 C CNN
 	1    2500 3800
@@ -1611,12 +1611,12 @@ Wire Wire Line
 $Comp
 L Connector_Generic:Conn_01x06 J3
 U 1 1 5E178CC1
-P 4250 4550
-F 0 "J3" H 4330 4542 50  0000 L CNN
-F 1 "FTDI" H 4250 4150 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal" H 4250 4550 50  0001 C CNN
-F 3 "~" H 4250 4550 50  0001 C CNN
-	1    4250 4550
+P 4750 4600
+F 0 "J3" H 4830 4592 50  0000 L CNN
+F 1 "FTDI" H 4750 4200 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal" H 4750 4600 50  0001 C CNN
+F 3 "~" H 4750 4600 50  0001 C CNN
+	1    4750 4600
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1636,43 +1636,43 @@ Wire Wire Line
 	2700 1450 2700 1500
 Text Label 2650 1450 2    50   ~ 0
 GNDD
-Text Label 4000 4350 2    50   ~ 0
+Text Label 4500 4400 2    50   ~ 0
 GNDD
-Text Label 4000 4450 2    50   ~ 0
+Text Label 4500 4500 2    50   ~ 0
 GNDD
-Text Label 4000 4550 2    50   ~ 0
+Text Label 4500 4600 2    50   ~ 0
 5V
-Text Label 4000 4650 2    50   ~ 0
+Text Label 4500 4700 2    50   ~ 0
 RX
-Text Label 4000 4750 2    50   ~ 0
+Text Label 4500 4800 2    50   ~ 0
 TX
 $Comp
 L Device:C_Small C13
 U 1 1 5E1C6352
-P 3900 4850
-F 0 "C13" V 3950 5000 50  0000 R CNN
-F 1 "100n" V 4050 5050 50  0000 R CNN
-F 2 "Capacitor_SMD:C_0805_2012Metric" H 3900 4850 50  0001 C CNN
-F 3 "~" H 3900 4850 50  0001 C CNN
-	1    3900 4850
+P 4400 4900
+F 0 "C13" V 4450 5050 50  0000 R CNN
+F 1 "100n" V 4550 5100 50  0000 R CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 4400 4900 50  0001 C CNN
+F 3 "~" H 4400 4900 50  0001 C CNN
+	1    4400 4900
 	0    1    1    0   
 $EndComp
-Text Label 3750 4850 2    50   ~ 0
+Text Label 4250 4900 2    50   ~ 0
 ~RST~
 Wire Wire Line
-	3750 4850 3800 4850
+	4250 4900 4300 4900
 Wire Wire Line
-	4000 4850 4050 4850
+	4500 4900 4550 4900
 Wire Wire Line
-	4000 4750 4050 4750
+	4500 4800 4550 4800
 Wire Wire Line
-	4000 4650 4050 4650
+	4500 4700 4550 4700
 Wire Wire Line
-	4000 4550 4050 4550
+	4500 4600 4550 4600
 Wire Wire Line
-	4000 4450 4050 4450
+	4500 4500 4550 4500
 Wire Wire Line
-	4000 4350 4050 4350
+	4500 4400 4550 4400
 Text Notes 10400 3750 0    50   ~ 0
 Green
 Wire Wire Line
@@ -1777,50 +1777,16 @@ Wire Wire Line
 $Comp
 L ErnoCCC-rescue:OLED-128-64-I2C-Display_Character D7
 U 1 1 5E62B592
-P 3950 3850
-F 0 "D7" H 4000 4450 50  0000 L CNN
-F 1 "OLED 128x64" H 3800 3850 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 3950 3850 50  0001 C CNN
-F 3 "" H 3950 3850 50  0001 C CNN
-	1    3950 3850
+P 4850 4100
+F 0 "D7" H 4900 4700 50  0000 L CNN
+F 1 "OLED 128x64" H 4700 4100 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 4850 4100 50  0001 C CNN
+F 3 "" H 4850 4100 50  0001 C CNN
+	1    4850 4100
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:+5V #PWR0103
-U 1 1 5E62C107
-P 3500 3400
-F 0 "#PWR0103" H 3500 3250 50  0001 C CNN
-F 1 "+5V" H 3550 3550 50  0000 C CNN
-F 2 "" H 3500 3400 50  0001 C CNN
-F 3 "" H 3500 3400 50  0001 C CNN
-	1    3500 3400
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GNDD #PWR0104
-U 1 1 5E62C71F
-P 3500 3700
-F 0 "#PWR0104" H 3500 3450 50  0001 C CNN
-F 1 "GNDD" H 3500 3550 50  0000 C CNN
-F 2 "" H 3500 3700 50  0001 C CNN
-F 3 "" H 3500 3700 50  0001 C CNN
-	1    3500 3700
-	1    0    0    -1  
-$EndComp
-Text Label 3500 3500 2    50   ~ 0
-SDA
-Text Label 3500 3600 2    50   ~ 0
-SCL
-Wire Wire Line
-	3500 3400 3550 3400
-Wire Wire Line
-	3500 3500 3550 3500
-Wire Wire Line
-	3500 3600 3550 3600
 Wire Wire Line
 	1400 5100 1400 5200
-Wire Wire Line
-	3500 3700 3550 3700
 Connection ~ 900  800 
 Wire Wire Line
 	900  800  900  650 
@@ -2007,7 +1973,7 @@ U 1 1 5ECEE961
 P 9500 1200
 F 0 "JP2" V 9350 1000 50  0000 L CNN
 F 1 "R1 Select" V 9545 1267 50  0001 L CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged12_Pad1.0x1.5mm" H 9500 1200 50  0001 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm" H 9500 1200 50  0001 C CNN
 F 3 "~" H 9500 1200 50  0001 C CNN
 	1    9500 1200
 	0    -1   -1   0   
@@ -2138,48 +2104,40 @@ Connection ~ 8850 5500
 $Comp
 L ErnoCCC-rescue:OLED-128-64-I2C-Display_Character D9
 U 1 1 5F3E6501
-P 3950 2900
-F 0 "D9" H 4000 3500 50  0000 L CNN
-F 1 "OLED 128x64" H 3800 2900 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 3950 2900 50  0001 C CNN
-F 3 "" H 3950 2900 50  0001 C CNN
-	1    3950 2900
+P 4850 2950
+F 0 "D9" H 4900 3550 50  0000 L CNN
+F 1 "OLED 128x64" H 4700 2950 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 4850 2950 50  0001 C CNN
+F 3 "" H 4850 2950 50  0001 C CNN
+	1    4850 2950
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR023
 U 1 1 5F3E650B
-P 3500 2450
-F 0 "#PWR023" H 3500 2300 50  0001 C CNN
-F 1 "+5V" H 3550 2600 50  0000 C CNN
-F 2 "" H 3500 2450 50  0001 C CNN
-F 3 "" H 3500 2450 50  0001 C CNN
-	1    3500 2450
+P 3950 2300
+F 0 "#PWR023" H 3950 2150 50  0001 C CNN
+F 1 "+5V" H 4000 2450 50  0000 C CNN
+F 2 "" H 3950 2300 50  0001 C CNN
+F 3 "" H 3950 2300 50  0001 C CNN
+	1    3950 2300
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GNDD #PWR024
 U 1 1 5F3E6515
-P 3500 2750
-F 0 "#PWR024" H 3500 2500 50  0001 C CNN
-F 1 "GNDD" H 3500 2600 50  0000 C CNN
-F 2 "" H 3500 2750 50  0001 C CNN
-F 3 "" H 3500 2750 50  0001 C CNN
-	1    3500 2750
+P 3950 3000
+F 0 "#PWR024" H 3950 2750 50  0001 C CNN
+F 1 "GNDD" H 3950 2850 50  0000 C CNN
+F 2 "" H 3950 3000 50  0001 C CNN
+F 3 "" H 3950 3000 50  0001 C CNN
+	1    3950 3000
 	1    0    0    -1  
 $EndComp
-Text Label 3500 2550 2    50   ~ 0
+Text Label 4400 2700 2    50   ~ 0
 SDA
-Text Label 3500 2650 2    50   ~ 0
+Text Label 4400 2600 2    50   ~ 0
 SCL
-Wire Wire Line
-	3500 2450 3550 2450
-Wire Wire Line
-	3500 2550 3550 2550
-Wire Wire Line
-	3500 2650 3550 2650
-Wire Wire Line
-	3500 2750 3550 2750
 $Comp
 L ErnoCCC-rescue:LD29150DT50R-Regulator_Linear U5
 U 1 1 5E4E1D57
@@ -2332,17 +2290,17 @@ Wire Wire Line
 $Comp
 L Connector_Generic:Conn_01x07 J7
 U 1 1 5E107107
-P 5750 5100
-F 0 "J7" H 5668 4575 50  0000 C CNN
-F 1 "Conn_01x07" H 5668 4666 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Horizontal" H 5750 5100 50  0001 C CNN
-F 3 "~" H 5750 5100 50  0001 C CNN
-	1    5750 5100
+P 5400 4900
+F 0 "J7" H 5318 4375 50  0000 C CNN
+F 1 "Conn_01x07" H 5318 4466 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
+F 3 "~" H 5400 4900 50  0001 C CNN
+	1    5400 4900
 	-1   0    0    1   
 $EndComp
-Text Label 6050 4800 0    50   ~ 0
+Text Label 5700 4600 0    50   ~ 0
 D10
-Text Label 6050 5200 0    50   ~ 0
+Text Label 5700 5000 0    50   ~ 0
 ~STOP~
 Text Label 4500 7200 0    50   ~ 0
 GRAY-A
@@ -2354,32 +2312,150 @@ Wire Wire Line
 	4450 6100 4500 6100
 Wire Wire Line
 	4500 7000 4500 7200
-Text Label 6050 5400 0    50   ~ 0
+Text Label 5700 5200 0    50   ~ 0
 GRAY-A
-Text Label 6050 5300 0    50   ~ 0
+Text Label 5700 5100 0    50   ~ 0
 GRAY-B
-Text Label 6050 5100 0    50   ~ 0
+Text Label 5700 4900 0    50   ~ 0
 SSR
 Text Label 8850 5350 0    50   ~ 0
 POTB
 Text Label 8700 4950 0    50   ~ 0
 POTA
-Text Label 6050 5000 0    50   ~ 0
+Text Label 5700 4800 0    50   ~ 0
 POTA
-Text Label 6050 4900 0    50   ~ 0
+Text Label 5700 4700 0    50   ~ 0
 POTB
 Wire Wire Line
-	5950 4800 6050 4800
+	5600 4600 5700 4600
 Wire Wire Line
-	5950 4900 6050 4900
+	5600 4700 5700 4700
 Wire Wire Line
-	5950 5000 6050 5000
+	5600 4800 5700 4800
 Wire Wire Line
-	5950 5100 6050 5100
+	5600 4900 5700 4900
 Wire Wire Line
-	5950 5200 6050 5200
+	5600 5000 5700 5000
 Wire Wire Line
-	5950 5300 6050 5300
+	5600 5100 5700 5100
 Wire Wire Line
-	5950 5400 6050 5400
+	5600 5200 5700 5200
+$Comp
+L Jumper:SolderJumper_3_Bridged12 JP3
+U 1 1 5E222D66
+P 3950 2500
+F 0 "JP3" H 3800 2400 50  0000 C CNN
+F 1 "VCC Ctrl" H 4150 2400 50  0000 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm" H 3950 2500 50  0001 C CNN
+F 3 "~" H 3950 2500 50  0001 C CNN
+	1    3950 2500
+	-1   0    0    1   
+$EndComp
+$Comp
+L Jumper:SolderJumper_3_Bridged12 JP4
+U 1 1 5E34A223
+P 3950 2800
+F 0 "JP4" H 3800 2900 50  0000 C CNN
+F 1 "GND Ctrl" H 3700 2700 50  0000 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm" H 3950 2800 50  0001 C CNN
+F 3 "~" H 3950 2800 50  0001 C CNN
+	1    3950 2800
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	4150 2500 4200 2500
+Wire Wire Line
+	4150 2800 4450 2800
+Wire Wire Line
+	3950 2950 3950 3000
+Wire Wire Line
+	3950 2300 3950 2350
+Wire Wire Line
+	3750 2800 3750 2650
+Wire Wire Line
+	3750 2650 4200 2650
+Wire Wire Line
+	4200 2650 4200 2500
+Connection ~ 4200 2500
+Wire Wire Line
+	4200 2500 4450 2500
+Wire Wire Line
+	3750 2500 3650 2500
+Wire Wire Line
+	3650 2500 3650 2950
+Wire Wire Line
+	3650 2950 3950 2950
+Connection ~ 3950 2950
+$Comp
+L power:GNDD #PWR027
+U 1 1 5E4A3753
+P 3950 4150
+F 0 "#PWR027" H 3950 3900 50  0001 C CNN
+F 1 "GNDD" H 3950 4000 50  0000 C CNN
+F 2 "" H 3950 4150 50  0001 C CNN
+F 3 "" H 3950 4150 50  0001 C CNN
+	1    3950 4150
+	1    0    0    -1  
+$EndComp
+Text Label 4400 3850 2    50   ~ 0
+SDA
+Text Label 4400 3750 2    50   ~ 0
+SCL
+$Comp
+L Jumper:SolderJumper_3_Bridged12 JP5
+U 1 1 5E4A375F
+P 3950 3650
+F 0 "JP5" H 3800 3550 50  0000 C CNN
+F 1 "VCC Ctrl" H 4150 3550 50  0000 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm" H 3950 3650 50  0001 C CNN
+F 3 "~" H 3950 3650 50  0001 C CNN
+	1    3950 3650
+	-1   0    0    1   
+$EndComp
+$Comp
+L Jumper:SolderJumper_3_Bridged12 JP6
+U 1 1 5E4A3769
+P 3950 3950
+F 0 "JP6" H 3800 4050 50  0000 C CNN
+F 1 "GND Ctrl" H 3700 3850 50  0000 C CNN
+F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm" H 3950 3950 50  0001 C CNN
+F 3 "~" H 3950 3950 50  0001 C CNN
+	1    3950 3950
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	4150 3650 4200 3650
+Wire Wire Line
+	4150 3950 4450 3950
+Wire Wire Line
+	3950 4100 3950 4150
+Wire Wire Line
+	3950 3450 3950 3500
+Wire Wire Line
+	3750 3950 3750 3800
+Wire Wire Line
+	3750 3800 4200 3800
+Wire Wire Line
+	4200 3800 4200 3650
+Connection ~ 4200 3650
+Wire Wire Line
+	4200 3650 4450 3650
+Wire Wire Line
+	3750 3650 3650 3650
+Wire Wire Line
+	3650 3650 3650 4100
+Wire Wire Line
+	3650 4100 3950 4100
+Connection ~ 3950 4100
+$Comp
+L power:+5V #PWR026
+U 1 1 5E4A3749
+P 3950 3450
+F 0 "#PWR026" H 3950 3300 50  0001 C CNN
+F 1 "+5V" H 4000 3600 50  0000 C CNN
+F 2 "" H 3950 3450 50  0001 C CNN
+F 3 "" H 3950 3450 50  0001 C CNN
+	1    3950 3450
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
