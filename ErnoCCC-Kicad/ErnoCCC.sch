@@ -630,190 +630,6 @@ Text Label 2150 4700 0    50   ~ 0
 SSR
 Wire Wire Line
 	2000 4700 2150 4700
-$Comp
-L ErnoCCC-rescue:CPC2017N-Relay_SolidState U6
-U 1 1 5E30DB67
-P 7950 3600
-F 0 "U6" H 7950 3600 50  0000 C CNN
-F 1 "CPC2017N" H 7950 4076 50  0000 C CNN
-F 2 "ErnoCCC:SOIC-8" H 7950 3075 50  0001 C CIN
-F 3 "https://www.mouser.de/datasheet/2/240/CPC2017N-1548396.pdf" H 7950 3800 50  0001 L CNN
-	1    7950 3600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_POT_Small RV1
-U 1 1 5E31D0A7
-P 8500 3300
-F 0 "RV1" V 8400 3200 50  0000 C CNN
-F 1 "4k7" V 8400 3400 50  0000 C CNN
-F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 8500 3300 50  0001 C CNN
-F 3 "~" H 8500 3300 50  0001 C CNN
-	1    8500 3300
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R_POT_Small RV2
-U 1 1 5E31F08A
-P 8500 3700
-F 0 "RV2" V 8400 3600 50  0000 C CNN
-F 1 "4k7" V 8400 3800 50  0000 C CNN
-F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 8500 3700 50  0001 C CNN
-F 3 "~" H 8500 3700 50  0001 C CNN
-	1    8500 3700
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8700 3400 8500 3400
-Wire Wire Line
-	8500 3800 8700 3800
-Wire Wire Line
-	7650 3500 7550 3500
-Wire Wire Line
-	7550 3500 7550 3900
-Wire Wire Line
-	7550 3900 7650 3900
-Wire Wire Line
-	8250 3300 8400 3300
-Wire Wire Line
-	8250 3700 8400 3700
-Wire Wire Line
-	8250 3500 8300 3500
-Wire Wire Line
-	8300 3500 8300 3900
-Wire Wire Line
-	8300 3900 8250 3900
-Wire Wire Line
-	8700 3300 8700 3400
-$Comp
-L ErnoCCC-rescue:CPC2017N-Relay_SolidState U7
-U 1 1 5E368DC6
-P 7950 4600
-F 0 "U7" H 7950 4600 50  0000 C CNN
-F 1 "CPC2017N" H 7950 5076 50  0000 C CNN
-F 2 "ErnoCCC:SOIC-8" H 7950 4075 50  0001 C CIN
-F 3 "https://www.mouser.de/datasheet/2/240/CPC2017N-1548396.pdf" H 7950 4800 50  0001 L CNN
-	1    7950 4600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_POT_Small RV3
-U 1 1 5E368DD0
-P 8500 4300
-F 0 "RV3" V 8400 4200 50  0000 C CNN
-F 1 "4k7" V 8400 4400 50  0000 C CNN
-F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 8500 4300 50  0001 C CNN
-F 3 "~" H 8500 4300 50  0001 C CNN
-	1    8500 4300
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R_POT_Small RV4
-U 1 1 5E368DDA
-P 8500 4700
-F 0 "RV4" V 8400 4600 50  0000 C CNN
-F 1 "4k7" V 8400 4800 50  0000 C CNN
-F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 8500 4700 50  0001 C CNN
-F 3 "~" H 8500 4700 50  0001 C CNN
-	1    8500 4700
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8700 4400 8500 4400
-Wire Wire Line
-	8500 4800 8700 4800
-Wire Wire Line
-	7650 4500 7550 4500
-Wire Wire Line
-	7550 4500 7550 4900
-Wire Wire Line
-	7550 4900 7650 4900
-Wire Wire Line
-	8250 4300 8400 4300
-Wire Wire Line
-	8250 4700 8400 4700
-Wire Wire Line
-	8250 4500 8300 4500
-Wire Wire Line
-	8300 4500 8300 4900
-Wire Wire Line
-	8300 4900 8250 4900
-Wire Wire Line
-	8700 4300 8700 4400
-$Comp
-L ErnoCCC-rescue:CPC2017N-Relay_SolidState U8
-U 1 1 5E377C4B
-P 7950 5600
-F 0 "U8" H 7950 5600 50  0000 C CNN
-F 1 "CPC2017N" H 7950 6076 50  0000 C CNN
-F 2 "ErnoCCC:SOIC-8" H 7950 5075 50  0001 C CIN
-F 3 "https://www.mouser.de/datasheet/2/240/CPC2017N-1548396.pdf" H 7950 5800 50  0001 L CNN
-	1    7950 5600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_POT_Small RV5
-U 1 1 5E377C55
-P 8500 5300
-F 0 "RV5" V 8400 5200 50  0000 C CNN
-F 1 "4k7" V 8400 5400 50  0000 C CNN
-F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 8500 5300 50  0001 C CNN
-F 3 "~" H 8500 5300 50  0001 C CNN
-	1    8500 5300
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7650 5500 7550 5500
-Wire Wire Line
-	8250 5300 8400 5300
-Wire Wire Line
-	8250 5500 8300 5500
-Wire Wire Line
-	8700 5300 8700 5400
-Wire Wire Line
-	8300 3900 8300 4500
-Connection ~ 8300 3900
-Connection ~ 8300 4500
-Wire Wire Line
-	8300 4900 8300 5500
-Connection ~ 8300 4900
-Wire Wire Line
-	8700 3700 8700 3800
-Connection ~ 8700 3700
-Connection ~ 8700 4300
-Connection ~ 8700 3400
-Wire Wire Line
-	8700 3400 8700 3700
-Wire Wire Line
-	8600 3700 8700 3700
-Connection ~ 8700 3800
-Wire Wire Line
-	8700 3800 8700 4050
-Wire Wire Line
-	8600 4300 8700 4300
-Connection ~ 8700 4400
-Wire Wire Line
-	8700 4400 8700 4700
-Wire Wire Line
-	8600 4700 8700 4700
-Wire Wire Line
-	8700 4700 8700 4800
-Connection ~ 8700 4700
-Connection ~ 8700 5300
-Wire Wire Line
-	8600 5300 8700 5300
-Connection ~ 8700 4800
-Wire Wire Line
-	8700 4800 8700 5300
-Wire Wire Line
-	8500 5400 8700 5400
-Wire Wire Line
-	7550 3900 7550 4500
-Connection ~ 7550 3900
-Connection ~ 7550 4500
-Wire Wire Line
-	7550 4900 7550 5500
-Connection ~ 7550 4900
 Connection ~ 8900 3300
 Wire Wire Line
 	8900 4300 8900 3700
@@ -828,7 +644,7 @@ L ErnoCCC-rescue:CPC2317N-Relay_SolidState U10
 U 1 1 5E2947AB
 P 9400 4600
 F 0 "U10" H 9400 4600 50  0000 C CNN
-F 1 "CPC2317N" H 9400 4150 50  0000 C CNN
+F 1 "CPC2317N" H 9400 5050 50  0000 C CNN
 F 2 "ErnoCCC:SOIC-8" H 9400 4075 50  0001 C CIN
 F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 4800 50  0001 L CNN
 	1    9400 4600
@@ -845,17 +661,15 @@ Wire Wire Line
 	9000 3900 9000 4500
 Connection ~ 9000 4500
 Connection ~ 9000 4900
-Wire Wire Line
-	9000 4900 9000 4950
 $Comp
 L power:GNDD #PWR022
 U 1 1 5E2947D3
-P 9000 4950
-F 0 "#PWR022" H 9000 4700 50  0001 C CNN
-F 1 "GNDD" H 9000 4800 50  0000 C CNN
-F 2 "" H 9000 4950 50  0001 C CNN
-F 3 "" H 9000 4950 50  0001 C CNN
-	1    9000 4950
+P 9000 6250
+F 0 "#PWR022" H 9000 6000 50  0001 C CNN
+F 1 "GNDD" H 9000 6100 50  0000 C CNN
+F 2 "" H 9000 6250 50  0001 C CNN
+F 3 "" H 9000 6250 50  0001 C CNN
+	1    9000 6250
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -892,7 +706,7 @@ L ErnoCCC-rescue:CPC2317N-Relay_SolidState U9
 U 1 1 5E264720
 P 9400 3600
 F 0 "U9" H 9400 3600 50  0000 C CNN
-F 1 "CPC2317N" H 9400 4076 50  0000 C CNN
+F 1 "CPC2317N" H 9400 4050 50  0000 C CNN
 F 2 "ErnoCCC:SOIC-8" H 9400 3075 50  0001 C CIN
 F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 3800 50  0001 L CNN
 	1    9400 3600
@@ -902,19 +716,12 @@ Wire Wire Line
 	9700 3900 9800 3900
 Wire Wire Line
 	9800 3900 9800 4050
-Wire Wire Line
-	9800 4050 8700 4050
-Connection ~ 8700 4050
-Wire Wire Line
-	8700 4050 8700 4300
 Text Notes 10400 3450 0    50   ~ 0
 Blue (PCB)
-Text Notes 10400 3650 0    50   ~ 0
+Text Notes 10400 3550 0    50   ~ 0
 Orange (PCB)
 Text Notes 10400 3350 0    50   ~ 0
 Blue (Pot)
-Text Notes 10400 3550 0    50   ~ 0
-Orange (Pot)
 Text Label 7300 3300 2    50   ~ 0
 <<
 Text Label 7300 3700 2    50   ~ 0
@@ -925,17 +732,6 @@ Text Label 7300 4700 2    50   ~ 0
 >
 Text Label 7300 5300 2    50   ~ 0
 >>
-$Comp
-L Device:R_Small R15
-U 1 1 5E4E5BAA
-P 7400 5500
-F 0 "R15" H 7450 5650 50  0000 R CNN
-F 1 "1k5" V 7300 5550 50  0000 R CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" H 7400 5500 50  0001 C CNN
-F 3 "~" H 7400 5500 50  0001 C CNN
-	1    7400 5500
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
 	8900 3250 8900 3300
 $Comp
@@ -949,7 +745,7 @@ F 3 "~" H 8900 3150 50  0001 C CNN
 	1    8900 3150
 	-1   0    0    1   
 $EndComp
-Text Label 7300 3000 2    50   ~ 0
+Text Label 8850 3000 2    50   ~ 0
 SSR
 Wire Wire Line
 	8900 3000 8900 3050
@@ -973,12 +769,6 @@ Wire Wire Line
 	2000 3600 2150 3600
 Wire Wire Line
 	2000 4800 2150 4800
-Connection ~ 7450 3300
-Wire Wire Line
-	7450 3300 7650 3300
-Connection ~ 7450 3700
-Wire Wire Line
-	7450 3700 7650 3700
 $Comp
 L Connector:TestPoint TP8
 U 1 1 5E56BF42
@@ -1012,9 +802,6 @@ F 3 "~" H 7650 4300 50  0001 C CNN
 	1    7450 4300
 	1    0    0    -1  
 $EndComp
-Connection ~ 7450 4300
-Wire Wire Line
-	7450 4300 7650 4300
 $Comp
 L Connector:TestPoint TP10
 U 1 1 5E5713A7
@@ -1026,9 +813,6 @@ F 3 "~" H 7650 4700 50  0001 C CNN
 	1    7450 4700
 	1    0    0    -1  
 $EndComp
-Connection ~ 7450 4700
-Wire Wire Line
-	7450 4700 7650 4700
 $Comp
 L Connector:TestPoint TP11
 U 1 1 5E571752
@@ -1040,9 +824,6 @@ F 3 "~" H 7650 5300 50  0001 C CNN
 	1    7450 5300
 	1    0    0    -1  
 $EndComp
-Connection ~ 7450 5300
-Wire Wire Line
-	7450 5300 7650 5300
 $Comp
 L Connector:TestPoint TP6
 U 1 1 5E571A52
@@ -1054,25 +835,6 @@ F 3 "~" H 7650 3000 50  0001 C CNN
 	1    7450 3000
 	1    0    0    -1  
 $EndComp
-Connection ~ 7450 3000
-Wire Wire Line
-	7450 3000 8900 3000
-$Comp
-L Connector:TestPoint TP13
-U 1 1 5E5721A3
-P 8700 3250
-F 0 "TP13" H 8400 3450 50  0000 L CNN
-F 1 "PotA" H 8600 3450 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8900 3250 50  0001 C CNN
-F 3 "~" H 8900 3250 50  0001 C CNN
-	1    8700 3250
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8600 3300 8700 3300
-Wire Wire Line
-	8700 3250 8700 3300
-Connection ~ 8700 3300
 Wire Wire Line
 	7300 3000 7450 3000
 Wire Wire Line
@@ -1085,17 +847,6 @@ Wire Wire Line
 	7300 4700 7450 4700
 Wire Wire Line
 	7300 5300 7450 5300
-$Comp
-L power:GNDD #PWR019
-U 1 1 5E4E6756
-P 7300 5600
-F 0 "#PWR019" H 7300 5350 50  0001 C CNN
-F 1 "GNDD" H 7250 5450 50  0000 C CNN
-F 2 "" H 7300 5600 50  0001 C CNN
-F 3 "" H 7300 5600 50  0001 C CNN
-	1    7300 5600
-	1    0    0    -1  
-$EndComp
 $Comp
 L 74xx:74HC14 U4
 U 3 1 5E5F5DDD
@@ -1481,115 +1232,10 @@ Wire Wire Line
 	5700 7000 5700 7050
 Wire Wire Line
 	5900 7000 5950 7000
-$Comp
-L Transistor_BJT:BC847 Q3
-U 1 1 5E916B0B
-P 9450 5500
-F 0 "Q3" V 9650 5400 50  0000 C CNN
-F 1 "BC847" V 9300 5650 50  0000 C CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 9650 5425 50  0001 L CIN
-F 3 "https://www.mouser.de/datasheet/2/308/BC846ALT1-D-1293035.pdf" H 9450 5500 50  0001 L CNN
-	1    9450 5500
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Device:R_Small R18
-U 1 1 5E919A23
-P 9600 5700
-F 0 "R18" V 9700 5700 50  0000 C CNN
-F 1 "10k" V 9500 5700 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" H 9600 5700 50  0001 C CNN
-F 3 "~" H 9600 5700 50  0001 C CNN
-	1    9600 5700
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	8300 5500 8850 5500
-Wire Wire Line
-	8850 5500 8850 5200
-Connection ~ 8300 5500
-Wire Wire Line
-	9650 5400 9750 5400
-Wire Wire Line
-	9750 5400 9750 4700
-Connection ~ 9750 4700
-Wire Wire Line
-	9700 4900 9700 5200
-Wire Wire Line
-	9700 5200 8850 5200
-Wire Wire Line
-	9500 5700 9450 5700
-Connection ~ 7550 5500
-$Comp
-L Device:R_Small R16
-U 1 1 5E9EA6DF
-P 7950 6100
-F 0 "R16" V 8050 6150 50  0000 R CNN
-F 1 "1k5" V 8150 6150 50  0000 R CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" H 7950 6100 50  0001 C CNN
-F 3 "~" H 7950 6100 50  0001 C CNN
-	1    7950 6100
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7650 5900 7650 6100
-Wire Wire Line
-	7650 6100 7850 6100
-Wire Wire Line
-	8050 6100 9050 6100
-Wire Wire Line
-	9050 6100 9050 5400
-Wire Wire Line
-	9050 5400 9250 5400
-$Comp
-L power:+5V #PWR020
-U 1 1 5EA0C828
-P 7650 5650
-F 0 "#PWR020" H 7650 5500 50  0001 C CNN
-F 1 "+5V" H 7650 5550 50  0000 C CNN
-F 2 "" H 7650 5650 50  0001 C CNN
-F 3 "" H 7650 5650 50  0001 C CNN
-	1    7650 5650
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7650 5650 7650 5700
-Wire Wire Line
-	7300 5500 7300 5600
 Text Label 2150 2500 0    50   ~ 0
 ~STOP~
 Wire Wire Line
 	2000 4600 2150 4600
-Text Label 8300 5700 0    50   ~ 0
-~STOP~
-Wire Wire Line
-	8250 5700 8300 5700
-$Comp
-L power:GNDD #PWR021
-U 1 1 5EA75646
-P 8300 5900
-F 0 "#PWR021" H 8300 5650 50  0001 C CNN
-F 1 "GNDD" H 8250 5750 50  0000 C CNN
-F 2 "" H 8300 5900 50  0001 C CNN
-F 3 "" H 8300 5900 50  0001 C CNN
-	1    8300 5900
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8250 5900 8300 5900
-$Comp
-L Connector:TestPoint TP12
-U 1 1 5EA86048
-P 8300 5750
-F 0 "TP12" V 8400 5800 50  0000 L CNN
-F 1 "~STOP~" V 8300 5950 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 5750 50  0001 C CNN
-F 3 "~" H 8500 5750 50  0001 C CNN
-	1    8300 5750
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8300 5750 8300 5700
 Text Label 2150 4100 0    50   ~ 0
 RX
 Text Label 2150 4200 0    50   ~ 0
@@ -1606,8 +1252,6 @@ Wire Wire Line
 	2600 4700 2650 4700
 Wire Wire Line
 	2600 4800 2650 4800
-Wire Wire Line
-	7500 5500 7550 5500
 $Comp
 L Connector_Generic:Conn_01x06 J3
 U 1 1 5E178CC1
@@ -1673,29 +1317,15 @@ Wire Wire Line
 	4500 4500 4550 4500
 Wire Wire Line
 	4500 4400 4550 4400
-Text Notes 10400 3750 0    50   ~ 0
-Green
 Wire Wire Line
-	9700 3300 10100 3300
+	9700 3300 10150 3300
 Wire Wire Line
-	9750 3400 10100 3400
+	9750 3400 10150 3400
 Wire Wire Line
-	9900 4300 9900 3500
+	9700 4300 9950 4300
 Wire Wire Line
-	9900 3500 10100 3500
-Wire Wire Line
-	9700 4300 9900 4300
-Wire Wire Line
-	9750 4500 10000 4500
-Wire Wire Line
-	10000 4500 10000 3600
-Wire Wire Line
-	10000 3600 10100 3600
+	9750 4500 10050 4500
 Connection ~ 9750 4500
-Wire Wire Line
-	10100 5700 10100 3700
-Wire Wire Line
-	9700 5700 10100 5700
 $Comp
 L Device:CP_Small C12
 U 1 1 5E4E47C1
@@ -1719,14 +1349,14 @@ F 3 "https://www.mouser.de/datasheet/2/115/HDS20M-1274637.pdf" H 1350 950 50  00
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Screw_Terminal_01x05 J4
+L Connector:Screw_Terminal_01x07 J4
 U 1 1 5E5035B9
-P 10300 3500
-F 0 "J4" H 10250 3800 50  0000 L CNN
-F 1 "Erno Controller" H 10300 3150 50  0000 L CNN
-F 2 "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-5-2.54_1x05_P2.54mm_Horizontal" H 10300 3500 50  0001 C CNN
-F 3 "~" H 10300 3500 50  0001 C CNN
-	1    10300 3500
+P 10350 3500
+F 0 "J4" H 10300 3800 50  0000 L CNN
+F 1 "Erno Controller" H 10300 3050 50  0000 L CNN
+F 2 "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-7-2.54_1x07_P2.54mm_Horizontal" H 10350 3500 50  0001 C CNN
+F 3 "~" H 10350 3500 50  0001 C CNN
+	1    10350 3500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2090,18 +1720,6 @@ Connection ~ 2350 6400
 Wire Wire Line
 	2350 6100 2450 6100
 $Comp
-L Connector:TestPoint TP14
-U 1 1 5F315DE7
-P 8850 5500
-F 0 "TP14" H 8750 5800 50  0000 L CNN
-F 1 "PotB" H 8750 5700 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 9050 5500 50  0001 C CNN
-F 3 "~" H 9050 5500 50  0001 C CNN
-	1    8850 5500
-	-1   0    0    1   
-$EndComp
-Connection ~ 8850 5500
-$Comp
 L ErnoCCC-rescue:OLED-128-64-I2C-Display_Character D9
 U 1 1 5F3E6501
 P 4850 2950
@@ -2318,10 +1936,6 @@ Text Label 5700 5100 0    50   ~ 0
 GRAY-B
 Text Label 5700 4900 0    50   ~ 0
 SSR
-Text Label 8850 5350 0    50   ~ 0
-POTB
-Text Label 8700 4950 0    50   ~ 0
-POTA
 Text Label 5700 4800 0    50   ~ 0
 POTA
 Text Label 5700 4700 0    50   ~ 0
@@ -2466,4 +2080,257 @@ Wire Wire Line
 	4400 3750 4450 3750
 Wire Wire Line
 	4400 3850 4450 3850
+$Comp
+L Amplifier_Operational:NCS20071 U?
+U 1 1 5E204FD7
+P 6100 1150
+F 0 "U?" H 6200 1050 50  0000 L CNN
+F 1 "NCS20071" H 6000 950 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 6100 1150 50  0001 C CNN
+F 3 "https://www.mouser.de/datasheet/2/308/NCS20071-D-470030.pdf" H 6250 1300 50  0001 C CNN
+	1    6100 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R?
+U 1 1 5E2064E3
+P 6250 1550
+F 0 "R?" V 6350 1550 50  0000 C CNN
+F 1 "47k" V 6450 1550 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric" H 6250 1550 50  0001 C CNN
+F 3 "~" H 6250 1550 50  0001 C CNN
+	1    6250 1550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small R?
+U 1 1 5E206C0A
+P 5600 1350
+F 0 "R?" H 5750 1300 50  0000 C CNN
+F 1 "27k" H 5750 1400 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric" H 5600 1350 50  0001 C CNN
+F 3 "~" H 5600 1350 50  0001 C CNN
+	1    5600 1350
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_POT_Small RV?
+U 1 1 5E208E10
+P 5750 1650
+F 0 "RV?" V 5850 1500 50  0000 C CNN
+F 1 "4k7" V 5950 1500 50  0000 C CNN
+F 2 "Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical" H 5750 1650 50  0001 C CNN
+F 3 "~" H 5750 1650 50  0001 C CNN
+	1    5750 1650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GNDD #PWR?
+U 1 1 5E20C34F
+P 6000 1700
+F 0 "#PWR?" H 6000 1450 50  0001 C CNN
+F 1 "GNDD" H 6000 1550 50  0000 C CNN
+F 2 "" H 6000 1700 50  0001 C CNN
+F 3 "" H 6000 1700 50  0001 C CNN
+	1    6000 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6400 1150 6400 1550
+Wire Wire Line
+	6400 1550 6350 1550
+Wire Wire Line
+	6150 1550 5800 1550
+Wire Wire Line
+	5800 1550 5800 1250
+Wire Wire Line
+	6000 1450 6000 1650
+Wire Wire Line
+	5600 1250 5800 1250
+Connection ~ 5800 1250
+Wire Wire Line
+	5600 1450 5600 1650
+Wire Wire Line
+	5600 1650 5650 1650
+Wire Wire Line
+	5850 1650 5900 1650
+Connection ~ 6000 1650
+Wire Wire Line
+	6000 1650 6000 1700
+Wire Wire Line
+	5750 1750 5900 1750
+Wire Wire Line
+	5900 1750 5900 1650
+Connection ~ 5900 1650
+Wire Wire Line
+	5900 1650 6000 1650
+Connection ~ 6400 1150
+Text Notes 10400 3250 0    50   ~ 0
++15 VDC
+Text Notes 10400 3850 0    50   ~ 0
+GND
+$Comp
+L power:+15V #PWR?
+U 1 1 5E443EB7
+P 10050 3200
+F 0 "#PWR?" H 10050 3050 50  0001 C CNN
+F 1 "+15V" H 10065 3373 50  0000 C CNN
+F 2 "" H 10050 3200 50  0001 C CNN
+F 3 "" H 10050 3200 50  0001 C CNN
+	1    10050 3200
+	1    0    0    -1  
+$EndComp
+Text Notes 10400 3750 0    50   ~ 0
+Green (PCB)
+Text Notes 10400 3650 0    50   ~ 0
+Green (Pot)
+Wire Wire Line
+	6950 800  7000 800 
+$Comp
+L Device:R_Small R18
+U 1 1 5E919A23
+P 6850 800
+F 0 "R18" V 6950 800 50  0000 C CNN
+F 1 "10k" V 6750 800 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 6850 800 50  0001 C CNN
+F 3 "~" H 6850 800 50  0001 C CNN
+	1    6850 800 
+	0    1    -1   0   
+$EndComp
+$Comp
+L Transistor_BJT:BC847 Q3
+U 1 1 5E916B0B
+P 7000 600
+F 0 "Q3" V 7200 500 50  0000 C CNN
+F 1 "BC847" V 6850 750 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 7200 525 50  0001 L CIN
+F 3 "https://www.mouser.de/datasheet/2/308/BC846ALT1-D-1293035.pdf" H 7000 600 50  0001 L CNN
+	1    7000 600 
+	0    1    -1   0   
+$EndComp
+$Comp
+L ErnoCCC-rescue:CPC2317N-Relay_SolidState U?
+U 1 1 5E570A7B
+P 9400 5650
+F 0 "U?" H 9400 5650 50  0000 C CNN
+F 1 "CPC2317N" H 9400 6100 50  0000 C CNN
+F 2 "ErnoCCC:SOIC-8" H 9400 5125 50  0001 C CIN
+F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 5850 50  0001 L CNN
+	1    9400 5650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9950 4300 9950 3600
+Wire Wire Line
+	9950 3600 10150 3600
+Wire Wire Line
+	10050 4500 10050 3700
+Wire Wire Line
+	10050 3700 10150 3700
+Wire Wire Line
+	10150 3500 9850 3500
+Wire Wire Line
+	9850 5750 9700 5750
+Wire Wire Line
+	9850 3500 9850 5750
+Text Label 9750 5950 0    50   ~ 0
+VCTRL
+Wire Wire Line
+	9700 5950 9750 5950
+Wire Wire Line
+	9000 4900 9000 5550
+Wire Wire Line
+	9100 5550 9000 5550
+Connection ~ 9000 5550
+Wire Wire Line
+	9000 5550 9000 5950
+Wire Wire Line
+	9100 5950 9000 5950
+Connection ~ 9000 5950
+Wire Wire Line
+	9000 5950 9000 6250
+Wire Wire Line
+	8900 4700 8900 5350
+Wire Wire Line
+	8900 5350 9100 5350
+Connection ~ 8900 4700
+Wire Wire Line
+	8900 5350 8900 5750
+Wire Wire Line
+	8900 5750 9100 5750
+Connection ~ 8900 5350
+Text Label 6750 1150 0    50   ~ 0
+VCTRL
+Wire Wire Line
+	8850 3000 8900 3000
+$Comp
+L power:GNDD #PWR?
+U 1 1 5E7172A8
+P 10150 3900
+F 0 "#PWR?" H 10150 3650 50  0001 C CNN
+F 1 "GNDD" H 10150 3750 50  0000 C CNN
+F 2 "" H 10150 3900 50  0001 C CNN
+F 3 "" H 10150 3900 50  0001 C CNN
+	1    10150 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10150 3800 10150 3900
+Wire Wire Line
+	10150 3200 10050 3200
+$Comp
+L power:+15V #PWR?
+U 1 1 5E74D1BD
+P 6000 700
+F 0 "#PWR?" H 6000 550 50  0001 C CNN
+F 1 "+15V" H 5850 750 50  0000 C CNN
+F 2 "" H 6000 700 50  0001 C CNN
+F 3 "" H 6000 700 50  0001 C CNN
+	1    6000 700 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6000 700  6000 850 
+$Comp
+L Device:C_Small C?
+U 1 1 5E768765
+P 6300 800
+F 0 "C?" H 6300 900 50  0000 L CNN
+F 1 "100n" H 6300 700 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6300 800 50  0001 C CNN
+F 3 "~" H 6300 800 50  0001 C CNN
+	1    6300 800 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 700  6000 700 
+Connection ~ 6000 700 
+$Comp
+L power:GNDD #PWR?
+U 1 1 5E7BC36F
+P 6300 900
+F 0 "#PWR?" H 6300 650 50  0001 C CNN
+F 1 "GNDD" H 6300 750 50  0000 C CNN
+F 2 "" H 6300 900 50  0001 C CNN
+F 3 "" H 6300 900 50  0001 C CNN
+	1    6300 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R?
+U 1 1 5E7BC9BF
+P 5650 1050
+F 0 "R?" V 5450 1050 50  0000 C CNN
+F 1 "5k6" V 5550 1050 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric" H 5650 1050 50  0001 C CNN
+F 3 "~" H 5650 1050 50  0001 C CNN
+	1    5650 1050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6400 1150 6750 1150
+Text Label 5500 1050 2    50   ~ 0
+DAC
+Wire Wire Line
+	5500 1050 5550 1050
 $EndSCHEMATC
