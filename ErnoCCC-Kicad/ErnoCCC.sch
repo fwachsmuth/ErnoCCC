@@ -651,31 +651,10 @@ F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 4800 50 
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9750 4500 9750 4700
-Connection ~ 9750 3500
-Wire Wire Line
 	9750 3400 9750 3500
-Wire Wire Line
-	9750 3500 9750 3700
 Wire Wire Line
 	9000 3900 9000 4500
 Connection ~ 9000 4500
-Connection ~ 9000 4900
-$Comp
-L power:GNDD #PWR022
-U 1 1 5E2947D3
-P 9000 6250
-F 0 "#PWR022" H 9000 6000 50  0001 C CNN
-F 1 "GNDD" H 9000 6100 50  0000 C CNN
-F 2 "" H 9000 6250 50  0001 C CNN
-F 3 "" H 9000 6250 50  0001 C CNN
-	1    9000 6250
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9750 4700 9700 4700
-Wire Wire Line
-	9700 4500 9750 4500
 Wire Wire Line
 	8900 4700 9100 4700
 Wire Wire Line
@@ -687,8 +666,6 @@ Wire Wire Line
 Wire Wire Line
 	9100 4500 9000 4500
 Connection ~ 9000 3900
-Wire Wire Line
-	9750 3700 9700 3700
 Wire Wire Line
 	9700 3500 9750 3500
 Wire Wire Line
@@ -712,41 +689,24 @@ F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 3800 50 
 	1    9400 3600
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	9700 3900 9800 3900
-Wire Wire Line
-	9800 3900 9800 4050
 Text Notes 10400 3450 0    50   ~ 0
 Blue (PCB)
 Text Notes 10400 3550 0    50   ~ 0
 Orange (PCB)
 Text Notes 10400 3350 0    50   ~ 0
 Blue (Pot)
-Text Label 7300 3300 2    50   ~ 0
+Text Label 8150 3150 2    50   ~ 0
 <<
-Text Label 7300 3700 2    50   ~ 0
+Text Label 8150 3550 2    50   ~ 0
 <
-Text Label 7300 4300 2    50   ~ 0
+Text Label 8150 4150 2    50   ~ 0
 o
-Text Label 7300 4700 2    50   ~ 0
+Text Label 8150 4550 2    50   ~ 0
 >
-Text Label 7300 5300 2    50   ~ 0
+Text Label 8150 5150 2    50   ~ 0
 >>
 Wire Wire Line
 	8900 3250 8900 3300
-$Comp
-L Device:R_Small R17
-U 1 1 5E2DB41B
-P 8900 3150
-F 0 "R17" H 8841 3104 50  0000 R CNN
-F 1 "330" H 8841 3195 50  0000 R CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" H 8900 3150 50  0001 C CNN
-F 3 "~" H 8900 3150 50  0001 C CNN
-	1    8900 3150
-	-1   0    0    1   
-$EndComp
-Text Label 8850 3000 2    50   ~ 0
-SSR
 Wire Wire Line
 	8900 3000 8900 3050
 Text Label 2150 3300 0    50   ~ 0
@@ -772,81 +732,81 @@ Wire Wire Line
 $Comp
 L Connector:TestPoint TP8
 U 1 1 5E56BF42
-P 7450 3700
-F 0 "TP8" H 7250 3850 50  0000 L CNN
-F 1 "<" H 7400 3650 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 3700 50  0001 C CNN
-F 3 "~" H 7650 3700 50  0001 C CNN
-	1    7450 3700
+P 8300 3550
+F 0 "TP8" H 8100 3700 50  0000 L CNN
+F 1 "<" H 8250 3500 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 3550 50  0001 C CNN
+F 3 "~" H 8500 3550 50  0001 C CNN
+	1    8300 3550
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP7
 U 1 1 5E570475
-P 7450 3300
-F 0 "TP7" H 7250 3450 50  0000 L CNN
-F 1 "<<" H 7400 3250 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 3300 50  0001 C CNN
-F 3 "~" H 7650 3300 50  0001 C CNN
-	1    7450 3300
+P 8300 3150
+F 0 "TP7" H 8100 3300 50  0000 L CNN
+F 1 "<<" H 8250 3100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 3150 50  0001 C CNN
+F 3 "~" H 8500 3150 50  0001 C CNN
+	1    8300 3150
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP9
 U 1 1 5E570F18
-P 7450 4300
-F 0 "TP9" H 7250 4450 50  0000 L CNN
-F 1 "o" H 7400 4250 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 4300 50  0001 C CNN
-F 3 "~" H 7650 4300 50  0001 C CNN
-	1    7450 4300
+P 8300 4150
+F 0 "TP9" H 8100 4300 50  0000 L CNN
+F 1 "o" H 8250 4100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 4150 50  0001 C CNN
+F 3 "~" H 8500 4150 50  0001 C CNN
+	1    8300 4150
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP10
 U 1 1 5E5713A7
-P 7450 4700
-F 0 "TP10" H 7200 4850 50  0000 L CNN
-F 1 ">" H 7400 4650 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 4700 50  0001 C CNN
-F 3 "~" H 7650 4700 50  0001 C CNN
-	1    7450 4700
+P 8300 4550
+F 0 "TP10" H 8050 4700 50  0000 L CNN
+F 1 ">" H 8250 4500 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 4550 50  0001 C CNN
+F 3 "~" H 8500 4550 50  0001 C CNN
+	1    8300 4550
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP11
 U 1 1 5E571752
-P 7450 5300
-F 0 "TP11" H 7200 5450 50  0000 L CNN
-F 1 ">>" H 7400 5250 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 5300 50  0001 C CNN
-F 3 "~" H 7650 5300 50  0001 C CNN
-	1    7450 5300
+P 8300 5150
+F 0 "TP11" H 8050 5300 50  0000 L CNN
+F 1 ">>" H 8250 5100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 5150 50  0001 C CNN
+F 3 "~" H 8500 5150 50  0001 C CNN
+	1    8300 5150
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP6
 U 1 1 5E571A52
-P 7450 3000
-F 0 "TP6" H 7250 3150 50  0000 L CNN
-F 1 "SSR" H 7400 2950 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 7650 3000 50  0001 C CNN
-F 3 "~" H 7650 3000 50  0001 C CNN
-	1    7450 3000
+P 8300 2850
+F 0 "TP6" H 8100 3000 50  0000 L CNN
+F 1 "SSR" H 8250 2800 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 8500 2850 50  0001 C CNN
+F 3 "~" H 8500 2850 50  0001 C CNN
+	1    8300 2850
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7300 3000 7450 3000
+	8150 2850 8300 2850
 Wire Wire Line
-	7300 3300 7450 3300
+	8150 3150 8300 3150
 Wire Wire Line
-	7300 3700 7450 3700
+	8150 3550 8300 3550
 Wire Wire Line
-	7300 4300 7450 4300
+	8150 4150 8300 4150
 Wire Wire Line
-	7300 4700 7450 4700
+	8150 4550 8300 4550
 Wire Wire Line
-	7300 5300 7450 5300
+	8150 5150 8300 5150
 $Comp
 L 74xx:74HC14 U4
 U 3 1 5E5F5DDD
@@ -1323,9 +1283,6 @@ Wire Wire Line
 	9750 3400 10150 3400
 Wire Wire Line
 	9700 4300 9950 4300
-Wire Wire Line
-	9750 4500 10050 4500
-Connection ~ 9750 4500
 $Comp
 L Device:CP_Small C12
 U 1 1 5E4E47C1
@@ -2081,7 +2038,7 @@ Wire Wire Line
 Wire Wire Line
 	4400 3850 4450 3850
 $Comp
-L Amplifier_Operational:NCS20071 U?
+L ErnoCCC-rescue:NCS20071-Amplifier_Operational U?
 U 1 1 5E204FD7
 P 6100 1150
 F 0 "U?" H 6200 1050 50  0000 L CNN
@@ -2208,17 +2165,6 @@ F 3 "https://www.mouser.de/datasheet/2/308/BC846ALT1-D-1293035.pdf" H 7000 600 5
 	1    7000 600 
 	0    1    -1   0   
 $EndComp
-$Comp
-L ErnoCCC-rescue:CPC2317N-Relay_SolidState U?
-U 1 1 5E570A7B
-P 9400 5650
-F 0 "U?" H 9400 5650 50  0000 C CNN
-F 1 "CPC2317N" H 9400 6100 50  0000 C CNN
-F 2 "ErnoCCC:SOIC-8" H 9400 5125 50  0001 C CIN
-F 3 "https://www.mouser.de/datasheet/2/240/CPC2317N-1548245.pdf" H 9400 5850 50  0001 L CNN
-	1    9400 5650
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9950 4300 9950 3600
 Wire Wire Line
@@ -2229,40 +2175,8 @@ Wire Wire Line
 	10050 3700 10150 3700
 Wire Wire Line
 	10150 3500 9850 3500
-Wire Wire Line
-	9850 5750 9700 5750
-Wire Wire Line
-	9850 3500 9850 5750
-Text Label 9750 5950 0    50   ~ 0
-VCTRL
-Wire Wire Line
-	9700 5950 9750 5950
-Wire Wire Line
-	9000 4900 9000 5550
-Wire Wire Line
-	9100 5550 9000 5550
-Connection ~ 9000 5550
-Wire Wire Line
-	9000 5550 9000 5950
-Wire Wire Line
-	9100 5950 9000 5950
-Connection ~ 9000 5950
-Wire Wire Line
-	9000 5950 9000 6250
-Wire Wire Line
-	8900 4700 8900 5350
-Wire Wire Line
-	8900 5350 9100 5350
-Connection ~ 8900 4700
-Wire Wire Line
-	8900 5350 8900 5750
-Wire Wire Line
-	8900 5750 9100 5750
-Connection ~ 8900 5350
 Text Label 6750 1150 0    50   ~ 0
 VCTRL
-Wire Wire Line
-	8850 3000 8900 3000
 $Comp
 L power:GNDD #PWR?
 U 1 1 5E7172A8
@@ -2333,4 +2247,51 @@ Text Label 5500 1050 2    50   ~ 0
 DAC
 Wire Wire Line
 	5500 1050 5550 1050
+Wire Wire Line
+	9700 4500 10050 4500
+Wire Wire Line
+	9850 3500 9850 3700
+Wire Wire Line
+	9850 3700 9700 3700
+Wire Wire Line
+	9700 3900 9750 3900
+Wire Wire Line
+	9750 3900 9750 4050
+Wire Wire Line
+	9750 4050 8700 4050
+Wire Wire Line
+	8850 3000 8900 3000
+Text Label 8850 3000 2    50   ~ 0
+SSR
+$Comp
+L Device:R_Small R17
+U 1 1 5E2DB41B
+P 8900 3150
+F 0 "R17" H 8841 3104 50  0000 R CNN
+F 1 "470" H 8841 3195 50  0000 R CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 8900 3150 50  0001 C CNN
+F 3 "~" H 8900 3150 50  0001 C CNN
+	1    8900 3150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9700 5950 9750 5950
+Text Label 9750 5950 0    50   ~ 0
+VCTRL
+$Comp
+L power:GNDD #PWR022
+U 1 1 5E2947D3
+P 9000 5000
+F 0 "#PWR022" H 9000 4750 50  0001 C CNN
+F 1 "GNDD" H 9000 4850 50  0000 C CNN
+F 2 "" H 9000 5000 50  0001 C CNN
+F 3 "" H 9000 5000 50  0001 C CNN
+	1    9000 5000
+	1    0    0    -1  
+$EndComp
+Text Label 8700 4050 2    50   ~ 0
+VCTRL
+Wire Wire Line
+	9000 4900 9000 5000
+Connection ~ 9000 4900
 $EndSCHEMATC
