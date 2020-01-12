@@ -1104,8 +1104,6 @@ Wire Wire Line
 	5700 7000 5700 7050
 Wire Wire Line
 	5900 7000 5950 7000
-Text Label 2150 2500 0    50   ~ 0
-~STOP~
 Wire Wire Line
 	2000 4600 2150 4600
 Text Label 2150 4100 0    50   ~ 0
@@ -1762,33 +1760,18 @@ Wire Wire Line
 Text Label 2150 2600 0    50   ~ 0
 D10
 $Comp
-L Connector:TestPoint TP15
-U 1 1 5E0E3D08
-P 2400 2600
-F 0 "TP15" V 2350 2800 50  0000 L CNN
-F 1 "D10" V 2350 2550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 2600 2600 50  0001 C CNN
-F 3 "~" H 2600 2600 50  0001 C CNN
-	1    2400 2600
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	2000 2600 2400 2600
-$Comp
-L Connector_Generic:Conn_01x07 J7
+L Connector_Generic:Conn_01x05 J7
 U 1 1 5E107107
 P 5400 4900
 F 0 "J7" H 5318 4375 50  0000 C CNN
-F 1 "Conn_01x07" H 5318 4466 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
+F 1 "Conn_01x05" H 5318 4466 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
 F 3 "~" H 5400 4900 50  0001 C CNN
 	1    5400 4900
 	-1   0    0    1   
 $EndComp
-Text Label 5700 4600 0    50   ~ 0
+Text Label 5700 4700 0    50   ~ 0
 D10
-Text Label 5700 5000 0    50   ~ 0
-~STOP~
 Text Label 4500 7200 0    50   ~ 0
 GRAY-A
 Text Label 4500 6100 0    50   ~ 0
@@ -1799,30 +1782,18 @@ Wire Wire Line
 	4450 6100 4500 6100
 Wire Wire Line
 	4500 7000 4500 7200
-Text Label 5700 5200 0    50   ~ 0
-GRAY-A
 Text Label 5700 5100 0    50   ~ 0
+GRAY-A
+Text Label 5700 5000 0    50   ~ 0
 GRAY-B
 Text Label 5700 4900 0    50   ~ 0
 SSR
-Text Label 5700 4800 0    50   ~ 0
-POTA
-Text Label 5700 4700 0    50   ~ 0
-POTB
-Wire Wire Line
-	5600 4600 5700 4600
 Wire Wire Line
 	5600 4700 5700 4700
-Wire Wire Line
-	5600 4800 5700 4800
-Wire Wire Line
-	5600 4900 5700 4900
 Wire Wire Line
 	5600 5000 5700 5000
 Wire Wire Line
 	5600 5100 5700 5100
-Wire Wire Line
-	5600 5200 5700 5200
 $Comp
 L Jumper:SolderJumper_3_Bridged12 JP3
 U 1 1 5E222D66
@@ -1966,7 +1937,7 @@ U 1 1 5E2064E3
 P 6250 1550
 F 0 "R18" V 6350 1550 50  0000 C CNN
 F 1 "47k" V 6450 1550 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric" H 6250 1550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 6250 1550 50  0001 C CNN
 F 3 "~" H 6250 1550 50  0001 C CNN
 	1    6250 1550
 	0    1    1    0   
@@ -1977,7 +1948,7 @@ U 1 1 5E206C0A
 P 5600 1350
 F 0 "R15" H 5750 1300 50  0000 C CNN
 F 1 "27k" H 5750 1400 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric" H 5600 1350 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 5600 1350 50  0001 C CNN
 F 3 "~" H 5600 1350 50  0001 C CNN
 	1    5600 1350
 	-1   0    0    1   
@@ -2124,7 +2095,7 @@ U 1 1 5E7BC9BF
 P 5650 1050
 F 0 "R16" V 5450 1050 50  0000 C CNN
 F 1 "5k6" V 5550 1050 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric" H 5650 1050 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 5650 1050 50  0001 C CNN
 F 3 "~" H 5650 1050 50  0001 C CNN
 	1    5650 1050
 	0    1    1    0   
@@ -2267,4 +2238,16 @@ F 3 "" H 6650 3850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6650 3600 6650 3850
+Wire Wire Line
+	5800 1050 5750 1050
+Text Label 2150 2500 0    50   ~ 0
+D9
+Wire Wire Line
+	2000 2600 2150 2600
+Text Label 5700 4800 0    50   ~ 0
+D9
+Wire Wire Line
+	5600 4800 5700 4800
+Wire Wire Line
+	5600 4900 5700 4900
 $EndSCHEMATC
