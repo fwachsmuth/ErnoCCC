@@ -18,6 +18,17 @@
  * - Add an accelerated rotary Encoder to target arbitrary film positions
  * - support electronic cutting lists to set all the marks
  * 
+ * PCB (Rev.B):
+ * - J7 etwas runter
+ * - ICSP bepunkten
+ * - U1 & U2 näher aneinander (Footprint, Pad halbieren)
+ * - Halbleiter bepunten
+ * C12 + C15 FP zu gross
+ * - R9/10 falsche Werte bei Mouser
+ * - Header-Maße sind falsch
+ * - Spalt o.r. weg
+ * - Speigelausschnitt etwas tiefer
+ * 
  * Notes: 
  * 
  * - D5 Pullup
