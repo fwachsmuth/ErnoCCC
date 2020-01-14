@@ -1760,17 +1760,17 @@ Wire Wire Line
 Text Label 2150 2600 0    50   ~ 0
 D10
 $Comp
-L Connector_Generic:Conn_01x07 J7
+L Connector_Generic:Conn_01x05 J7
 U 1 1 5E107107
 P 5400 4900
 F 0 "J7" H 5318 4375 50  0000 C CNN
-F 1 "Conn_01x07" H 5318 4466 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
+F 1 "Conn_01x05" H 5318 4466 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
 F 3 "~" H 5400 4900 50  0001 C CNN
 	1    5400 4900
 	-1   0    0    1   
 $EndComp
-Text Label 5700 4600 0    50   ~ 0
+Text Label 5700 4700 0    50   ~ 0
 D10
 Text Label 4500 7200 0    50   ~ 0
 GRAY-A
@@ -1782,18 +1782,18 @@ Wire Wire Line
 	4450 6100 4500 6100
 Wire Wire Line
 	4500 7000 4500 7200
-Text Label 5700 5200 0    50   ~ 0
-GRAY-A
 Text Label 5700 5100 0    50   ~ 0
-GRAY-B
+GRAY-A
 Text Label 5700 5000 0    50   ~ 0
+GRAY-B
+Text Label 5700 4900 0    50   ~ 0
 SSR
 Wire Wire Line
-	5600 4600 5700 4600
+	5600 4700 5700 4700
+Wire Wire Line
+	5600 5000 5700 5000
 Wire Wire Line
 	5600 5100 5700 5100
-Wire Wire Line
-	5600 5200 5700 5200
 $Comp
 L Jumper:SolderJumper_3_Bridged12 JP3
 U 1 1 5E222D66
@@ -2244,10 +2244,10 @@ Text Label 2150 2500 0    50   ~ 0
 D9
 Wire Wire Line
 	2000 2600 2150 2600
-Text Label 5700 4700 0    50   ~ 0
+Text Label 5700 4800 0    50   ~ 0
 D9
 Wire Wire Line
-	5600 4700 5700 4700
+	5600 4800 5700 4800
 Wire Wire Line
-	5600 5000 5700 5000
+	5600 4900 5700 4900
 $EndSCHEMATC
