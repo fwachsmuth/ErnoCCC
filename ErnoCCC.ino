@@ -25,6 +25,7 @@
  * - Halbleiter bepunten
  * - R9/10 falsche Werte bei Mouser
  * - Header-Maße sind falsch
+ * - Bite ICSP?
  * 
  * Notes: 
  * 
