@@ -26,6 +26,7 @@
  * - R9/10 falsche Werte bei Mouser
  * - Header-Maße sind falsch
  * - Bite ICSP?
+ * - No gold under the plastic standoffs
  * 
  * Notes: 
  * 
