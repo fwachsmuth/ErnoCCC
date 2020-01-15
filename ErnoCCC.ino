@@ -23,11 +23,8 @@
  * - ICSP bepunkten
  * - U1 & U2 näher aneinander (Footprint, Pad halbieren)
  * - Halbleiter bepunten
- * C12 + C15 FP zu gross
  * - R9/10 falsche Werte bei Mouser
  * - Header-Maße sind falsch
- * - Spalt o.r. weg
- * - Speigelausschnitt etwas tiefer
  * 
  * Notes: 
  * 
