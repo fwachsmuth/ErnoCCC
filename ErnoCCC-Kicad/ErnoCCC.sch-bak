@@ -1128,7 +1128,7 @@ U 1 1 5E178CC1
 P 4750 4600
 F 0 "J3" H 4830 4592 50  0000 L CNN
 F 1 "FTDI" H 4750 4200 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal" H 4750 4600 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal_shorter" H 4750 4600 50  0001 C CNN
 F 3 "~" H 4750 4600 50  0001 C CNN
 	1    4750 4600
 	1    0    0    -1  
@@ -1199,7 +1199,7 @@ U 1 1 5E4E47C1
 P 3200 1150
 F 0 "C12" H 3050 1250 50  0000 L CNN
 F 1 "10u" H 3000 1050 50  0000 L CNN
-F 2 "Capacitor_SMD:CP_Elec_5x5.8" H 3200 1150 50  0001 C CNN
+F 2 "Capacitor_SMD:CP_Elec_4x4.5" H 3200 1150 50  0001 C CNN
 F 3 "https://www.mouser.de/datasheet/2/293/e-cd-1511557.pdf" H 3200 1150 50  0001 C CNN
 	1    3200 1150
 	1    0    0    -1  
@@ -1352,7 +1352,7 @@ U 1 1 5E9565D8
 P 7950 1550
 F 0 "C15" V 8100 1500 50  0000 C CNN
 F 1 "10u" V 8050 1650 50  0000 C CNN
-F 2 "Capacitor_SMD:CP_Elec_5x5.8" H 7950 1550 50  0001 C CNN
+F 2 "Capacitor_SMD:CP_Elec_4x4.5" H 7950 1550 50  0001 C CNN
 F 3 "https://www.mouser.de/datasheet/2/293/e-cd-1511557.pdf" H 7950 1550 50  0001 C CNN
 	1    7950 1550
 	0    1    -1   0   
@@ -2180,7 +2180,7 @@ Wire Wire Line
 Wire Wire Line
 	7050 3800 7050 3850
 Text Label 7500 3500 0    50   ~ 0
-VCTRL
+DAC
 Wire Wire Line
 	7450 3500 7500 3500
 Text Label 6600 3500 2    50   ~ 0
@@ -2240,10 +2240,10 @@ Wire Wire Line
 Wire Wire Line
 	5600 4900 5700 4900
 $Comp
-L Device:CP_Small C?
+L Device:CP_Small C18
 U 1 1 5E1CEF91
 P 9950 2900
-F 0 "C?" H 10038 2946 50  0000 L CNN
+F 0 "C18" H 10038 2946 50  0000 L CNN
 F 1 "470u" H 10038 2855 50  0000 L CNN
 F 2 "Capacitor_SMD:CP_Elec_10x10" H 9950 2900 50  0001 C CNN
 F 3 "https://www.mouser.de/datasheet/2/293/e-wd-1511808.pdf" H 9950 2900 50  0001 C CNN
@@ -2262,10 +2262,10 @@ F 3 "" H 10050 2800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GNDD #PWR?
+L power:GNDD #PWR034
 U 1 1 5E1D39DC
 P 9750 2900
-F 0 "#PWR?" H 9750 2650 50  0001 C CNN
+F 0 "#PWR034" H 9750 2650 50  0001 C CNN
 F 1 "GNDD" H 9750 2750 50  0000 C CNN
 F 2 "" H 9750 2900 50  0001 C CNN
 F 3 "" H 9750 2900 50  0001 C CNN

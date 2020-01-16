@@ -19,12 +19,9 @@
  * - support electronic cutting lists to set all the marks
  * 
  * PCB (Rev.B):
- * - J7 etwas runter
  * - ICSP bepunkten
- * - U1 & U2 näher aneinander (Footprint, Pad halbieren)
  * - Halbleiter bepunkten
  * - R9/10 falsche Werte bei Mouser
- * - Bite ICSP?
  * 
  * Notes: 
  * 
