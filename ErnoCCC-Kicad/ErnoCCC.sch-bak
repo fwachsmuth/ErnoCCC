@@ -293,7 +293,7 @@ U 1 1 5E177724
 P 2050 7200
 F 0 "U2" H 2050 7517 50  0000 C CNN
 F 1 "QRE1113" H 2050 7426 50  0000 C CNN
-F 2 "ErnoCCC:QRE1113GR" H 2050 7000 50  0001 C CNN
+F 2 "ErnoCCC:QRE1113GR-slim" H 2050 7000 50  0001 C CNN
 F 3 "http://www.onsemi.com/pub/Collateral/QRE1113-D.PDF" H 2050 7300 50  0001 C CNN
 	1    2050 7200
 	1    0    0    -1  
@@ -360,7 +360,7 @@ U 1 1 5E1B7267
 P 2050 6200
 F 0 "U1" H 2050 6517 50  0000 C CNN
 F 1 "QRE1113" H 2050 6426 50  0000 C CNN
-F 2 "ErnoCCC:QRE1113GR" H 2050 6000 50  0001 C CNN
+F 2 "ErnoCCC:QRE1113GR-slim" H 2050 6000 50  0001 C CNN
 F 3 "http://www.onsemi.com/pub/Collateral/QRE1113-D.PDF" H 2050 6300 50  0001 C CNN
 	1    2050 6200
 	1    0    0    -1  
@@ -1592,7 +1592,7 @@ U 1 1 5F3E6501
 P 4850 2950
 F 0 "D9" H 4900 3550 50  0000 L CNN
 F 1 "OLED 128x64" H 4700 2950 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 4850 2950 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal_shorter" H 4850 2950 50  0001 C CNN
 F 3 "" H 4850 2950 50  0001 C CNN
 	1    4850 2950
 	1    0    0    -1  
@@ -1765,7 +1765,7 @@ U 1 1 5E107107
 P 5400 4900
 F 0 "J7" H 5318 4375 50  0000 C CNN
 F 1 "Conn_01x05" H 5318 4466 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal" H 5400 4900 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal_shorter" H 5400 4900 50  0001 C CNN
 F 3 "~" H 5400 4900 50  0001 C CNN
 	1    5400 4900
 	-1   0    0    1   

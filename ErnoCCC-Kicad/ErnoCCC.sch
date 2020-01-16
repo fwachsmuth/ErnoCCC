@@ -441,28 +441,6 @@ Wire Wire Line
 Text Label 4500 7100 0    50   ~ 0
 ICP1
 $Comp
-L Connector:TestPoint TP5
-U 1 1 5E1C35DB
-P 4450 7000
-F 0 "TP5" H 4400 7250 50  0000 L CNN
-F 1 "GRAY-A" H 4500 7150 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 4650 7000 50  0001 C CNN
-F 3 "~" H 4650 7000 50  0001 C CNN
-	1    4450 7000
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP4
-U 1 1 5E1C43D3
-P 4450 6000
-F 0 "TP4" H 4400 6250 50  0000 L CNN
-F 1 "GRAY-B" H 4500 6150 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.5mm_Drill0.7mm" H 4650 6000 50  0001 C CNN
-F 3 "~" H 4650 6000 50  0001 C CNN
-	1    4450 6000
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector:TestPoint TP1
 U 1 1 5E1C6D0F
 P 1700 950
@@ -946,7 +924,6 @@ F 3 "https://www.mouser.de/datasheet/2/916/74HC_HCT14-1517185.pdf" H 4150 7000 5
 	2    4150 7000
 	1    0    0    -1  
 $EndComp
-Connection ~ 4450 7000
 $Comp
 L 74xx:74HC14 U4
 U 1 1 5E173A7D
