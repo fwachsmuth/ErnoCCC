@@ -22,11 +22,9 @@
  * - J7 etwas runter
  * - ICSP bepunkten
  * - U1 & U2 näher aneinander (Footprint, Pad halbieren)
- * - Halbleiter bepunten
+ * - Halbleiter bepunkten
  * - R9/10 falsche Werte bei Mouser
- * - Header-Maße sind falsch
  * - Bite ICSP?
- * - No gold under the plastic standoffs
  * 
  * Notes: 
  * 
@@ -37,7 +35,6 @@
  * - D6 SSR ansteuern
  * - Button an D4 abfragen
  * - D5 LED PWM
- * - D10 for a Mosfet or PWM to the LDR-LED?
  * 
  */
 
