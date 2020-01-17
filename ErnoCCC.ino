@@ -46,7 +46,7 @@
 // Instantiate some Objects
 //
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);   
-Encoder myEnc(3, 2);
+Encoder myEnc(2, 3);
 SwitchManager theButton;
 
 // ---- Define uC Pins ------------------------------------
