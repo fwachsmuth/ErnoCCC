@@ -4,13 +4,16 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
+ * - Fix Kalles 16 fps bug
+ * - Detect Stop digitally
+ * - Poll Button in Setup()
+ * - Find out decent LED current
  * - Create Timers for the reference pulses
- * - Control the DC motor (via DAC/FET?)
  * - Write Controller Calibration routine
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
+ * 
  * - Control the Power LED (Stopped Mode)
- * - Store last used shot/playback FPS in EEPROM (after n seconds or Mode change)
- * - Moo
+  
  * 
  * Future Thoughts:
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
@@ -19,18 +22,14 @@
  * - support electronic cutting lists to set all the marks
  * 
  * PCB (Rev.B):
- * - ICSP bepunkten
- * - Halbleiter bepunkten
  * - R9/10 falsche Werte bei Mouser
  * 
  * Notes: 
  * 
- * - D5 Pullup
- * - D9 STOP auswerten
+ * - D5 Pullup (Pulldown?)
  * - LED Ports down
  * - 5 LEDs ansteuern
  * - D6 SSR ansteuern
- * - Button an D4 abfragen
  * - D5 LED PWM
  * 
  */
@@ -216,6 +215,8 @@ void setup() {
   pinMode(stopPin, INPUT_PULLUP);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
+
+  analogWrite(ledPwmPin, 10);
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
