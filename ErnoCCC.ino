@@ -10,7 +10,7 @@
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
  * - Control the Power LED (Stopped Mode)
  * - Store last used shot/playback FPS in EEPROM (after n seconds or Mode change)
- * - 
+ * - Moo
  * 
  * Future Thoughts:
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
