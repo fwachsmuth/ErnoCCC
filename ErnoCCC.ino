@@ -216,7 +216,7 @@ void setup() {
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
 
-  analogWrite(ledPwmPin, 10);
+  analogWrite(ledPwmPin, 1);
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
@@ -291,8 +291,8 @@ void loop() {
     // average several reading together
     freqSum = freqSum + FreqMeasure.read();
     freqCount++;
-    if (freqCount > 9) {
-      frequency = FreqMeasure.countToFrequency(freqSum / freqCount);
+    if (freqCount > 30) {
+      frequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2 );
       freqSum = 0;
       freqCount = 0;
     }
