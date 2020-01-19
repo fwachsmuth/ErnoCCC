@@ -51,7 +51,6 @@ SwitchManager theButton;
 // ---- Define uC Pins ------------------------------------
 //
 #define theButtonPin  4
-#define stopPin       9
 #define ssrPin        6
 #define ledPwmPin     5
 
@@ -90,6 +89,7 @@ uint8_t prevPaintedFps = 0;
 #define wasCounterVisible (prevPaintedState % 16 == 0)
 
 uint8_t state            = 0;
+uint8_t lastState       = 0;
 uint8_t prevPaintedState = 99;
 
 bool ignoreNextButtonPress     = false;
@@ -214,7 +214,6 @@ const uint8_t twoThirdsBottom[8] = {
 const uint8_t emptyTile[8] = {0,0,0,0,0,0,0,0};
 
 void setup() {
-  pinMode(stopPin, INPUT_PULLUP);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
 
@@ -256,14 +255,12 @@ void loop() {
   }
 
   theButton.check();
-  if (digitalRead(stopPin) == LOW && isRunning == 1) {   // Use MSBs to determine the run state
-    state = STATE_STOPPED;
+  if (state != lastState) {
     drawState();
-  } else if (digitalRead(stopPin) == HIGH && isRunning == 0) {
-    state = STATE_RUNNING;
-    drawState();
-  }
-  
+    lastState = state;
+  } 
+
+
   currentFrameCount = myEnc.read() / 4;
   if (currentFrameCount != prevFrameCount) {
     if (wasCounterVisible) {
