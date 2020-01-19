@@ -215,6 +215,7 @@ void setup() {
   pinMode(stopPin, INPUT_PULLUP);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
+//  pinMode(theButtonPin, INPUT_PULLUP); // Debug
 
   analogWrite(ledPwmPin, 1);
 
@@ -240,6 +241,8 @@ float prevPaintedFrequency = -999;
 
 
 void loop() {
+  Serial.println(digitalRead(theButtonPin));  // Debug
+
   theButton.check();
   if (digitalRead(stopPin) == LOW && isRunning == 1) {   // Use MSBs to determine the run state
     state = STATE_STOPPED;
