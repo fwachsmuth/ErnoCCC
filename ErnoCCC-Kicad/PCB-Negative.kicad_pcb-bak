@@ -87,7 +87,7 @@
       (mirror false)
       (drillshape 0)
       (scaleselection 1)
-      (outputdirectory "Gerbers-Rev.B/"))
+      (outputdirectory "Gerbers-Neg-Rev.B/"))
   )
 
   (net 0 "")
@@ -171,7 +171,7 @@
   (gr_line (start 69.1 42.1) (end 102 42.1) (layer Edge.Cuts) (width 0.05))
   (gr_arc (start 175.4 108.6) (end 175.4 107.7) (angle -90) (layer Edge.Cuts) (width 0.05))
 
-  (zone (net 0) (net_name "") (layer F.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 0) (net_name "") (layer F.Cu) (tstamp 5E22FE23) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
@@ -341,7 +341,7 @@
       )
     )
   )
-  (zone (net 0) (net_name "") (layer B.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 0) (net_name "") (layer B.Cu) (tstamp 5E22FE20) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
