@@ -95,6 +95,8 @@ uint8_t prevPaintedState = 99;
 bool ignoreNextButtonPress     = false;
 unsigned long requiredMillis   = 0;
 unsigned long writeToEEPROM    = 0;
+unsigned long lastEncoderPos;
+unsigned long lastEncoderChangeTs;
 bool checkRequiredMillisInLoop = false;
 bool checkWriteToEEPROMInLoop  = false;
 unsigned long totalSeconds     = 0;
@@ -215,7 +217,6 @@ void setup() {
   pinMode(stopPin, INPUT_PULLUP);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
-//  pinMode(theButtonPin, INPUT_PULLUP); // Debug
 
   analogWrite(ledPwmPin, 1);
 
@@ -241,7 +242,18 @@ float prevPaintedFrequency = -999;
 
 
 void loop() {
-  Serial.println(digitalRead(theButtonPin));  // Debug
+  // determine if the viewer is running or not, since we actually do not have a Stop Pin anymore 
+  //
+  if (myEnc.read() != lastEncoderPos) {
+    state = STATE_RUNNING;
+    lastEncoderChangeTs = millis();
+    lastEncoderPos = myEnc.read();
+  } else {
+    if (millis() - lastEncoderChangeTs > 100) {
+      state = STATE_STOPPED;
+      lastEncoderPos = myEnc.read();
+    }
+  }
 
   theButton.check();
   if (digitalRead(stopPin) == LOW && isRunning == 1) {   // Use MSBs to determine the run state
