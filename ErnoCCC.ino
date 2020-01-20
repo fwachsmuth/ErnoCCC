@@ -226,6 +226,7 @@ void setup() {
   //u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
 
   filmFps = readEEPROMValue(0);
+
   playbackFps = readEEPROMValue(1);
   
   drawState();
@@ -440,7 +441,7 @@ void drawCurrentFps(const bool redrawCurrentTime, const bool updateEEPROM) {
       u8x8.print(" 9");
       break;
     case FPS_16_2_3:
-      fps = 50/3;
+      fps = 50/3.0;
       u8x8.print(16);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
@@ -469,7 +470,7 @@ void drawCurrentCustomFrequency() {
 void drawCurrentTime(bool forceFullRedraw) {
   u8x8.setFont(u8x8_font_courB18_2x3_n);
   
-  if (filmFps != 50/3) {
+  if (filmFps != 50/3.0) {
     currentSubFrame = currentFrameCount % int(filmFps);
     currentFilmSecond = abs(currentFrameCount) / filmFps;
   } else {               // for 16 2/3 fps (Kalle magic)
@@ -563,10 +564,11 @@ uint8_t getFpsState(float inputFps) {
   }
 }
 
-uint8_t readEEPROMValue(uint8_t address) {
+float readEEPROMValue(uint8_t address) {
   uint8_t value = 0;
   value = EEPROM.read(address);
   if (value == 0) return 1;
+  else if (value == 16) return 50/3.0;
   else return value;
 }
 
