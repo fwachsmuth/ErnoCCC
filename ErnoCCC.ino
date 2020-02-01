@@ -5,10 +5,9 @@
  * 
  * To Do: 
  * - Fix Kalles 16 fps bug
- * - Detect Stop digitally
  * - Poll Button in Setup()
  * - Find out decent LED current
- * - Create Timers for the reference pulses
+ * - Create Timers for the 9 reference pulse
  * - Write Controller Calibration routine
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
  * 
@@ -34,6 +33,7 @@
  * 
  */
 
+#include <Wire.h>
 #include <Encoder.h>
 #include <FreqMeasure.h>
 
@@ -122,6 +122,15 @@ uint8_t prevPaintedFps = 0;
 
 #define isRunning         (state >> 4)
 #define wasCounterVisible (prevPaintedState % 16 == 0)
+
+
+long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
+double freqSum=0;
+int freqCount=0;
+float frequency;
+unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enough 
+
+float prevPaintedFrequency = -999;
 
 uint8_t state            = 0;
 uint8_t lastState       = 0;
@@ -248,7 +257,9 @@ const uint8_t twoThirdsBottom[8] = {
 };
 const uint8_t emptyTile[8] = {0,0,0,0,0,0,0,0};
 
+
 void setup() {
+  dac.begin(0x60);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
 
@@ -264,7 +275,9 @@ void setup() {
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
+  
   u8x8.begin();
+  
   //u8x8.setI2CAddress(0x7a); // This would set a 2nd Display to a dedictaed I2C Adress
   //u8x8.setBusClock(800000); // overclocking doesn't seem to be necessary yet
 
@@ -272,20 +285,78 @@ void setup() {
 
   playbackFps = readEEPROMValue(1);
   
-  drawState();
+  drawState();  
 
-  
+  // check if we need to calibrate Voltages
+  //
+  if (digitalRead(theButtonPin) == HIGH) { // SET BACK TO LOW
+    Serial.println(F("In Setup"));
+    calibrateVoltages();
+  }
 }
 
-long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
-double freqSum=0;
-int freqCount=0;
-float frequency;
-unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enough 
+void calibrateVoltages() {
+  digitalWrite(ssrPin, HIGH);
+  float intendedFrequency[] = {9.00, 16.00, 16.66, 18.00, 24.00, 25.00};
+  float actualFrequency;
+  int lastTooFast = 0;
+  int lastTooSlow = 4095;
+  int testVoltage = 2048;
 
-float prevPaintedFrequency = -999;
+  /*
+  0    = fast
+  4095 = slow
+  */
 
+  FreqMeasure.begin();
+  
+  for (int i = 0; i <= 5; i++) {
+    Serial.print(F("Gesuchte Frequenz: "));
+    Serial.println(intendedFrequency[i]);
+    
+    do {
+      dac.setVoltage(testVoltage, false);
+      while (freqCount <= 100) {
+        if (FreqMeasure.available()) {
+          // average several reading together
+          freqSum = freqSum + FreqMeasure.read();
+          freqCount++;
+        }
+      }
+      actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
+      freqSum = 0;
+      freqCount = 0;
+      Serial.println("");
+      Serial.print(F("DAC Wert:"));
+      Serial.print(testVoltage);
+      Serial.print(F(" - gemessene Frequenz: "));
+      Serial.println(actualFrequency);
+    
+      if (actualFrequency > intendedFrequency[i]) { // too fast
+        lastTooFast = testVoltage;
+        testVoltage = (testVoltage + lastTooSlow) / 2;
+      }
+      if (actualFrequency < intendedFrequency[i]) { // too slow
+        lastTooSlow = testVoltage;
+        testVoltage = (testVoltage + lastTooFast) / 2;
+      }
+    } while (abs(actualFrequency - intendedFrequency[i]) > 0.1);
 
+    // write testVoltage to EEPROM
+    Serial.print(F("Voltage Found: "));
+    Serial.println(testVoltage);
+    Serial.println(F("******"));
+
+    lastTooFast = 0;
+    lastTooSlow = 4095;
+    testVoltage = 2048;
+      
+    
+  }
+  FreqMeasure.end;
+}
+
+// ******************************************************************************
 void loop() {
 
   // Lets contrl the Motor!
@@ -446,21 +517,23 @@ void setLeds(int bargraph) {
 
 void controlProjector(int correction) {
   if (correction != lastCorrection) {
+    Serial.print(F("Frmaes off: "));
+    Serial.println(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(1710, false);
+      dac.setVoltage(2300, false);
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(1605, false);
+      dac.setVoltage(2200, false);
     } else if (correction == 0) {
       setLeds(0);
-      dac.setVoltage(1555, false);
+      dac.setVoltage(2100, false);
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(1500, false);  //1500
+      dac.setVoltage(2000, false);  
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(1395, false);
+      dac.setVoltage(1900, false);
     }
     lastCorrection = correction;
   }
@@ -590,12 +663,11 @@ void drawState() {
       u8x8.drawTile(12,6,3,unlockedLockTop);
       fpsState = FPS_UNLOCKED;
 
-      // timer1 stop
-      // detachInterrupt(digitalPinToInterrupt(impDetectorPin));
       Serial.println(F("Freq-Measuer ON, Timer1 STOP"));
-      
       stopTimer1();
       detachInterrupt(digitalPinToInterrupt(impDetectorPin));
+      Serial.println(F("Crystal Control OFF"));
+      digitalWrite(ssrPin, LOW);
       FreqMeasure.begin();
       
       drawCurrentCustomFrequency();
@@ -628,9 +700,11 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
             Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
             FreqMeasure.end();
             
-            dac.begin(0x60);
             setupTimer1forFps(18); // takes 16, 1666, 18, 24 or 25 only
             attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
+            Serial.println(F("Crystal Control ON"));
+            digitalWrite(ssrPin, HIGH);
+            
             
             drawCurrentFps(false, false);
           } else drawCurrentFps(false, true);
