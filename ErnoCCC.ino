@@ -217,7 +217,7 @@ void setup() {
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
 
-  analogWrite(ledPwmPin, 1);
+  analogWrite(ledPwmPin, 10);
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
