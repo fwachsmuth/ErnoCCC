@@ -40,19 +40,30 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <U8x8lib.h>          // Display Driver
+#include <Adafruit_MCP4725.h> // Fancy DAC for voltage control
+
 #include <SwitchManager.h>    // Button Handling and Debouncing, http://www.gammon.com.au/switches
 
 // Instantiate some Objects
 //
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);   
 Encoder myEnc(2, 3);
+Adafruit_MCP4725 dac;                                   // Instantiate the DAC
 SwitchManager theButton;
 
 // ---- Define uC Pins ------------------------------------
 //
-#define theButtonPin  4
-#define ssrPin        6
-#define ledPwmPin     5
+#define impDetectorPin    3  // Here goes the encoder impulses
+#define theButtonPin      4
+#define ssrPin            6
+#define ledPwmPin         5
+
+#define ledSlowerRed      A0  //  --
+#define ledSlowerYellow   A1  //  -
+#define ledGreen          A2  //  o
+#define ledFasterYellow   A3  //  +
+#define ledFasterRed      7  //  ++
+
 
 
 // ---- Define useful time constants and macros ------------------------------------
@@ -63,6 +74,30 @@ SwitchManager theButton;
 #define numberOfSeconds(_time_) (_time_ % SECS_PER_MIN)  
 #define numberOfMinutes(_time_) ((_time_ / SECS_PER_MIN) % SECS_PER_MIN) 
 #define numberOfHours(_time_) ((_time_ % SECS_PER_DAY) / SECS_PER_HOUR)
+
+
+// Timer Variables
+
+int timerFactor = 0;      // this is used for the Timer1 postscaler, since multiples of 18 and 24 Hz give better accuracy
+volatile int timerDivider = 0; // For Modulo in the ISR
+volatile unsigned long timerFrames = 0;
+
+// Projector Variables
+
+byte segmentCount = 4;    // What kind of Shutter Blade do we have?
+volatile int projectorDivider = 0; // For Modulo in the ISR
+volatile unsigned long projectorFrames = 0;
+
+
+// Other variables
+byte selectedSpeed;       // Takes 16, 16 2/3, 18, 24 or 25 fps right now
+unsigned long millisNow = 0;
+unsigned long lastMillis = 0;
+long frameDifference = 0;
+
+int lastCorrection = 0;
+  
+
 
 // ---- Running screen state machine --------------------------------------
 //
@@ -217,7 +252,15 @@ void setup() {
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
 
-  analogWrite(ledPwmPin, 10);
+  pinMode(ledSlowerRed, OUTPUT);     //  --
+  pinMode(ledSlowerYellow, OUTPUT);  //  -
+  pinMode(ledGreen, OUTPUT);         //  o
+  pinMode(ledFasterYellow, OUTPUT);  //  +
+  pinMode(ledFasterRed, OUTPUT);     //  ++
+  
+
+  analogWrite(ledPwmPin, 1);
+
 
   theButton.begin(theButtonPin, onButtonPress);
   Serial.begin(115200);
@@ -230,6 +273,8 @@ void setup() {
   playbackFps = readEEPROMValue(1);
   
   drawState();
+
+  
 }
 
 long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
@@ -242,6 +287,25 @@ float prevPaintedFrequency = -999;
 
 
 void loop() {
+
+  // Lets contrl the Motor!
+  //
+  millisNow = millis();
+
+  frameDifference = timerFrames - projectorFrames;
+  controlProjector(frameDifference);
+
+  if ((millisNow % 1000 == 0) && (lastMillis != millisNow)) {
+    Serial.print("Timer: ");
+    Serial.print(timerFrames);
+    Serial.print(", Projektor: ");
+    Serial.print(projectorFrames);
+    Serial.print(", Differenz ***: ");
+    Serial.println(frameDifference);
+    lastMillis = millisNow;
+  }  
+
+  
   // determine if the viewer is running or not, since we actually do not have a Stop Pin anymore 
   //
   if (myEnc.read() != lastEncoderPos) {
@@ -297,6 +361,7 @@ void loop() {
 
   if (checkWriteToEEPROMInLoop && millis() >= writeToEEPROM) {
     checkWriteToEEPROMInLoop = false;
+    Serial.println(F("Writing to EEPROM"));
     EEPROM.write(isRunning, fps);
   }
 
@@ -313,6 +378,163 @@ void loop() {
   }
 }
 
+// End Loop -----------------------------------------------
+
+ISR(TIMER1_COMPA_vect) {
+  if (timerDivider == 0) {
+    //    digitalWrite(ledPin, digitalRead(ledPin) ^ 1);
+    //    digitalWrite(ledPin, HIGH);
+    //    digitalWrite(ledPin, LOW);
+    timerFrames++;
+  }
+  timerDivider++;
+  timerDivider %= timerFactor;
+
+}
+
+void projectorCountISR() {
+  if (projectorDivider == 0) {
+    projectorFrames++;
+  }
+  projectorDivider++;
+  projectorDivider %= (segmentCount * 2); // we are triggering on CHANGE
+}
+
+void setLeds(int bargraph) {
+  switch(bargraph) {
+    case -2:
+      digitalWrite(ledSlowerRed, HIGH);
+      digitalWrite(ledSlowerYellow, LOW);
+      digitalWrite(ledGreen, LOW);
+      digitalWrite(ledFasterYellow, LOW);
+      digitalWrite(ledFasterRed, LOW);
+      break;
+    case -1:  
+      digitalWrite(ledSlowerRed, LOW);
+      digitalWrite(ledSlowerYellow, HIGH);
+      digitalWrite(ledGreen, LOW);
+      digitalWrite(ledFasterYellow, LOW);
+      digitalWrite(ledFasterRed, LOW);
+      break;
+    case 0:
+      digitalWrite(ledSlowerRed, LOW);
+      digitalWrite(ledSlowerYellow, LOW);
+      digitalWrite(ledGreen, HIGH);
+      digitalWrite(ledFasterYellow, LOW);
+      digitalWrite(ledFasterRed, LOW);
+      break;
+    case 1:
+      digitalWrite(ledSlowerRed, LOW);
+      digitalWrite(ledSlowerYellow, LOW);
+      digitalWrite(ledGreen, LOW);
+      digitalWrite(ledFasterYellow, HIGH);
+      digitalWrite(ledFasterRed, LOW);
+      break;
+    case 2:
+      digitalWrite(ledSlowerRed, LOW);
+      digitalWrite(ledSlowerYellow, LOW);
+      digitalWrite(ledGreen, LOW);
+      digitalWrite(ledFasterYellow, LOW);
+      digitalWrite(ledFasterRed, HIGH);
+      break;
+    default:
+      break;
+
+  }
+}
+
+
+void controlProjector(int correction) {
+  if (correction != lastCorrection) {
+    if (correction <= -2) {
+      setLeds(-2);
+      dac.setVoltage(1710, false);
+    } else if (correction == -1) {
+      setLeds(-1);
+      dac.setVoltage(1605, false);
+    } else if (correction == 0) {
+      setLeds(0);
+      dac.setVoltage(1555, false);
+    } else if (correction == 1) {
+      setLeds(1);
+      dac.setVoltage(1500, false);  //1500
+    } else if (correction >= 2) {
+      setLeds(2);
+      dac.setVoltage(1395, false);
+    }
+    lastCorrection = correction;
+  }
+}
+
+void stopTimer1() {
+  // TCCR1B &= ~(1 << CS11);
+  noInterrupts();
+  TIMSK1 &= ~(1 << OCIE1A);
+  interrupts();
+}
+
+bool setupTimer1forFps(byte sollfps) {
+  if (sollfps == 16 || sollfps == 1666 || sollfps ==  18 || sollfps == 24 || sollfps == 25) {
+    noInterrupts();
+    // Clear registers
+    TCCR1A = 0;
+    TCCR1B = 0;
+    TCNT1 = 0;
+    // CTC
+    TCCR1B |= (1 << WGM12);
+
+    switch (sollfps) {
+      case 16:
+        OCR1A = 15624;    // 16 Hz (16000000/((15624+1)*64))
+        TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
+        timerFactor = 1;
+
+        break;
+      case 1666:
+        OCR1A = 14999;    // 16 2/3 Hz (16000000/((14999+1)*64))
+        TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
+        timerFactor = 1;
+
+        break;
+      case 18:
+        OCR1A = 10100;    // 198.000198000198 Hz (16000000/((10100+1)*8)),
+        //              divided by 11 is 18.000018.. Hz
+        //              or 18 2/111,111
+        //              or 2,000,000/111,111
+        //
+        TCCR1B |= (1 << CS11);  // Prescaler 8
+        timerFactor = 11;
+
+        break;
+      case 24:
+        OCR1A = 60605;    // 264.000264000264 Hz (16000000/((60605+1)*1)),
+        //               divided by 11 is 24.000024.. Hz
+        //               or 24 8/333,333
+        //               or 8,000,000 / 333,333
+        //
+        TCCR1B |= (1 << CS10);  // Prescaler 1
+        timerFactor = 11;
+
+        break;
+      case 25:
+        OCR1A = 624;      // 25 Hz (16000000/((624+1)*1024))
+        TCCR1B |= (1 << CS12) | (1 << CS10); // Prescaler 1024
+        timerFactor = 1;
+
+        break;
+      default:
+        break;
+    }
+    // Output Compare Match A Interrupt Enable
+    TIMSK1 |= (1 << OCIE1A);
+    interrupts();
+  } else {
+    // invalid fps requested
+    Serial.println(F("Invalid FPS request"));
+    return false;
+  }
+}
+
 void drawState() {
   checkRequiredMillisInLoop = false;
   if (!wasCounterVisible) {
@@ -325,6 +547,7 @@ void drawState() {
       break;
     case STATE_STOPPED:
       if (prevPaintedState == STATE_RESET) ignoreNextButtonPress = true;
+      Serial.println(F("Freq-Measuer OFF, but do NOT start the Timer1!"));
       FreqMeasure.end();
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(1,6);
@@ -333,6 +556,7 @@ void drawState() {
       drawCurrentFps(false, false);
       if (checkWriteToEEPROMInLoop) {
         checkWriteToEEPROMInLoop = false;
+        Serial.println(F("Writing to EEPROM"));
         EEPROM.write(1, playbackFps);
       }
       break;
@@ -360,10 +584,19 @@ void drawState() {
       u8x8.drawTile(12,7,2,lockBottom);
       u8x8.drawTile(12,6,3,unlockedLockTop);
       fpsState = FPS_UNLOCKED;
+
+      // timer1 stop
+      // detachInterrupt(digitalPinToInterrupt(impDetectorPin));
+      Serial.println(F("Freq-Measuer ON, Timer1 STOP"));
+      
+      stopTimer1();
+      detachInterrupt(digitalPinToInterrupt(impDetectorPin));
       FreqMeasure.begin();
+      
       drawCurrentCustomFrequency();
       if (checkWriteToEEPROMInLoop) {
         checkWriteToEEPROMInLoop = false;
+        Serial.println(F("Writing to EEPROM"));
         EEPROM.write(0, filmFps);
       }
   }
@@ -387,7 +620,13 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
             u8x8.setCursor(5,6);
             u8x8.print("  ");
             fpsState = getFpsState(playbackFps);
+            Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
             FreqMeasure.end();
+            
+            dac.begin(0x60);
+            setupTimer1forFps(18); // takes 16, 1666, 18, 24 or 25 only
+            attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
+            
             drawCurrentFps(false, false);
           } else drawCurrentFps(false, true);
           break;
