@@ -474,6 +474,11 @@ void stopTimer1() {
 }
 
 bool setupTimer1forFps(byte sollfps) {
+  // start with a new sync point, no need to catch up differences from before.
+  timerFrames = 0;
+  projectorFrames = 0;
+  timerDivider = 0;
+  
   if (sollfps == 16 || sollfps == 1666 || sollfps ==  18 || sollfps == 24 || sollfps == 25) {
     noInterrupts();
     // Clear registers
