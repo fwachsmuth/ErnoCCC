@@ -5,6 +5,9 @@
  * 
  * To Do: 
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
+ * - Turn on LED during Claibration
+ * - Flash LED after Claibration
+ * - Draw some Display STuff when Calibrating
  * - Take the smallest diff value once testVoltage keeps repeating
  * - Fix Kalles 16 fps bug
  * - Poll Button in Setup()
@@ -98,7 +101,15 @@ unsigned long lastMillis = 0;
 long frameDifference = 0;
 
 int lastCorrection = 0;
-  
+
+
+// Global Vars for Motor Control Voltage Calibration  
+float motorVoltageScaleFactor = -78.00; // Final Factor and Offset are calcuclated during Calibration
+float motorVoltageOffset = 4100.00;      
+const float hiFpsTestFreq = 25.00; 
+const float loFpsTestFreq = 9.00;
+
+
 
 
 // ---- Running screen state machine --------------------------------------
@@ -293,72 +304,119 @@ void setup() {
   //
   if (digitalRead(theButtonPin) == HIGH) { // SET BACK TO LOW
     Serial.println(F("In Setup"));
-    calibrateVoltages();
+    calibrateCtrlVoltage();
   }
 }
 
-void calibrateVoltages() {
+int calculateVoltageForFPS(byte fps) {
+  // Factor and Offset are calcuclated during Calibration.
+  //
+  return fps * motorVoltageScaleFactor + motorVoltageOffset;
+}
+
+void calibrateCtrlVoltage() {
   digitalWrite(ssrPin, HIGH);
-  float intendedFrequency[] = {9.00, 25.00, 16.00, 24.00, 16.66, 18.00};
   float actualFrequency;
   int lastTooFast = 0;
   int lastTooSlow = 4095;
-  int testVoltage = 2048;
+  int testVoltage = 500;
   int prevTestVoltage;
+  int hiSpeedVoltage;
+  int loSpeedVoltage;
 
   /*
   0    = fast
   4095 = slow
+
+  voltage = ((Vhi - Vlo) / (HF - LF)) * desiredFPS + (Vhi - HF * ((Vhi - Vlo) / (HF - LF))
+            _____________A___________                            _____________A___________ 
+                                                      _________________B__________________ 
   */
 
   FreqMeasure.begin();
   
-  for (int i = 0; i <= 5; i++) {
-    Serial.print(F("Gesuchte Frequenz: "));
-    Serial.println(intendedFrequency[i]);
-    Serial.print(F("Messzyklen:"));
-    Serial.println(int((intendedFrequency[i] / 8) * 120));
-   
-    do {
-      dac.setVoltage(testVoltage, false);
-      while (freqCount <= int((intendedFrequency[i] / 6) * 100)) { // Measure longer on higher speeds
-        if (FreqMeasure.available()) {
-          // average several reading together
-          freqSum = freqSum + FreqMeasure.read();
-          freqCount++;
-        }
+  Serial.println(F("Searching 25 fps Ctrl Value in 600 Measurements: "));
+  do {
+    dac.setVoltage(testVoltage, false);
+    while (freqCount <= 600) { 
+      if (FreqMeasure.available()) {
+        // average several reading together
+        freqSum = freqSum + FreqMeasure.read();
+        freqCount++;
       }
-      actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
-      freqSum = 0;
-      freqCount = 0;
-      Serial.print(F("DAC Wert:"));
-      Serial.print(testVoltage);
-      Serial.print(F(" - gemessene Frequenz: "));
-      Serial.println(actualFrequency);
-      if (abs(actualFrequency - intendedFrequency[i]) < 0.1) break;
-      if (testVoltage == prevTestVoltage) break;
-      prevTestVoltage = testVoltage;   
-      if (actualFrequency > intendedFrequency[i]) { // too fast
-        lastTooFast = testVoltage;
-        testVoltage = (testVoltage + lastTooSlow) / 2;
-      }
-      if (actualFrequency < intendedFrequency[i]) { // too slow
-        lastTooSlow = testVoltage;
-        testVoltage = (testVoltage + lastTooFast) / 2;
-      }
-    } while (true);
+    }
+    actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
+    freqSum = 0;
+    freqCount = 0;
+    Serial.print(F("DAC Wert:"));
+    Serial.print(testVoltage);
+    Serial.print(F(" - gemessene Frequenz: "));
+    Serial.println(actualFrequency);
+    if (abs(actualFrequency - hiFpsTestFreq) < 0.1) break;
+    if (testVoltage == prevTestVoltage) break;
+    prevTestVoltage = testVoltage;   
+    if (actualFrequency > hiFpsTestFreq) { // too fast
+      lastTooFast = testVoltage;
+      testVoltage = (testVoltage + lastTooSlow) / 2;
+    }
+    if (actualFrequency < hiFpsTestFreq) { // too slow
+      lastTooSlow = testVoltage;
+      testVoltage = (testVoltage + lastTooFast) / 2;
+    }
+  } while (true);
+  hiSpeedVoltage = testVoltage;
+  Serial.print(F("Hi-Speed Voltage Found: "));
+  Serial.println(hiSpeedVoltage);
+  Serial.println(F("******"));
 
-    // write testVoltage to EEPROM
-    Serial.print(F("Voltage Found: "));
-    Serial.println(testVoltage);
-    Serial.println(F("******"));
+  // prepare to determine the low speed ctrl voltage
+  
+  lastTooFast = 0;
+  lastTooSlow = 4095;
+  testVoltage = 3000;
+  Serial.println(F("Searching 9 fps Ctrl Value in 200 Measurements: "));
+  do {
+    dac.setVoltage(testVoltage, false);
+    while (freqCount <= 200) { 
+      if (FreqMeasure.available()) {
+        // average several reading together
+        freqSum = freqSum + FreqMeasure.read();
+        freqCount++;
+      }
+    }
+    actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
+    freqSum = 0;
+    freqCount = 0;
+    Serial.print(F("DAC Wert:"));
+    Serial.print(testVoltage);
+    Serial.print(F(" - gemessene Frequenz: "));
+    Serial.println(actualFrequency);
+    if (abs(actualFrequency - loFpsTestFreq) < 0.1) break;
+    if (testVoltage == prevTestVoltage) break;
+    prevTestVoltage = testVoltage;   
+    if (actualFrequency > loFpsTestFreq) { // too fast
+      lastTooFast = testVoltage;
+      testVoltage = (testVoltage + lastTooSlow) / 2;
+    }
+    if (actualFrequency < loFpsTestFreq) { // too slow
+      lastTooSlow = testVoltage;
+      testVoltage = (testVoltage + lastTooFast) / 2;
+    }
+  } while (true);
+  loSpeedVoltage = testVoltage;
+  Serial.print(F("Lo-Speed Voltage Found: "));
+  Serial.println(loSpeedVoltage);
+  Serial.println(F("******"));
 
-    lastTooFast = 0;
-    lastTooSlow = 4095;
-    testVoltage = 2048;
-      
+  motorVoltageScaleFactor = (hiSpeedVoltage - loSpeedVoltage) / (hiFpsTestFreq - loFpsTestFreq) ; 
+  motorVoltageOffset = hiSpeedVoltage - hiFpsTestFreq * motorVoltageScaleFactor;      
+  Serial.print(F("A: "));
+  Serial.println(motorVoltageScaleFactor);
+  Serial.print(F("B: "));
+  Serial.println(motorVoltageOffset);
+  // write testVoltage to EEPROM and global vars
     
-  }
+    
   FreqMeasure.end;
 }
 
