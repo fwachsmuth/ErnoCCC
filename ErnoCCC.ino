@@ -337,7 +337,7 @@ void setup() {
 int calculateVoltageForFPS(float fps) {
   // Factor and Offset are calcuclated during Calibration.
   //
-  return fps * motorVoltageScaleFactor + motorVoltageOffset;
+  return constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095);
 }
 
 void calibrateCtrlVoltage() {
@@ -450,18 +450,11 @@ void calibrateCtrlVoltage() {
   Serial.println(F("Struct written to EEPROM at Adr 4."));
   Serial.println();
 
-  Serial.print("9: ");
-  Serial.println(calculateVoltageForFPS(9));
-  Serial.print("16: ");
-  Serial.println(calculateVoltageForFPS(16));
-  Serial.print("16.66: ");
-  Serial.println(calculateVoltageForFPS(float(16.66)));
-  Serial.print("18: ");
-  Serial.println(calculateVoltageForFPS(18));
-  Serial.print("24: ");
-  Serial.println(calculateVoltageForFPS(24));
-  Serial.print("25: ");
-  Serial.println(calculateVoltageForFPS(25));
+  for (int i=1; i<41; i++) {
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(calculateVoltageForFPS(i));
+  }
     
   FreqMeasure.end;
 }
@@ -576,6 +569,7 @@ ISR(TIMER1_COMPA_vect) {
 void projectorCountISR() {
   if (projectorDivider == 0) {
     projectorFrames++;
+    projectorFrames++;  // Temp fix until the Timer constants are fixed
   }
   projectorDivider++;
   projectorDivider %= (segmentCount * 2); // we are triggering on CHANGE
@@ -629,32 +623,27 @@ void controlProjector(int correction) {
   const int offset = 0;
   if (correction != lastCorrection) {
     Serial.print(F("Frames off: "));
-    Serial.println(correction);
+    Serial.print(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(calculateVoltageForFPS(15) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(16) + offset, false);
       Serial.print("-- ");
-      Serial.println(calculateVoltageForFPS(15) + offset);
     } else if (correction == -1) {
       setLeds(-1);
       dac.setVoltage(calculateVoltageForFPS(17) + offset, false);
       Serial.print("- ");
-      Serial.println(calculateVoltageForFPS(17) + offset);
     } else if (correction == 0) {
       setLeds(0);
       dac.setVoltage(calculateVoltageForFPS(18) + offset, false);
-      Serial.println(calculateVoltageForFPS(18) + offset);
       Serial.print("o ");
     } else if (correction == 1) {
       setLeds(1);
       dac.setVoltage(calculateVoltageForFPS(19) + offset, false);
       Serial.print("+ ");
-      Serial.println(calculateVoltageForFPS(19) + offset);
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(calculateVoltageForFPS(21) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(20) + offset, false);
       Serial.print("++ ");
-      Serial.println(calculateVoltageForFPS(21) + offset);
     }
     lastCorrection = correction;
   }
