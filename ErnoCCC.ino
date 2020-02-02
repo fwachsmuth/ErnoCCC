@@ -4,11 +4,15 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
+ * Calibration
+ * - EEPROMify
+ * - Make calibration more efficient by something better than halfing
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
  * - Turn on LED during Claibration
  * - Flash LED after Claibration
  * - Draw some Display STuff when Calibrating
  * - Take the smallest diff value once testVoltage keeps repeating
+ * 
  * - Fix Kalles 16 fps bug
  * - Poll Button in Setup()
  * - Find out decent LED current
@@ -35,6 +39,13 @@
  * - 5 LEDs ansteuern
  * - D6 SSR ansteuern
  * - D5 LED PWM
+ * 
+ * EEPROM 
+ * 0: filmFps
+ * 1: playbackFps
+ * 4: struct
+ *      float motorVoltageScaleFactor
+ *      float motorVoltageOffset
  * 
  */
 
@@ -109,6 +120,10 @@ float motorVoltageOffset = 4100.00;
 const float hiFpsTestFreq = 25.00; 
 const float loFpsTestFreq = 9.00;
 
+struct MeasuredMotorCtrlParams {
+  float motorVoltageScaleFactor;
+  float motorVoltageOffset;
+};
 
 
 
@@ -272,6 +287,7 @@ const uint8_t emptyTile[8] = {0,0,0,0,0,0,0,0};
 
 
 void setup() {
+  Serial.begin(115200);
   dac.begin(0x60);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
@@ -285,9 +301,18 @@ void setup() {
 
   analogWrite(ledPwmPin, 1);
 
+  MeasuredMotorCtrlParams fromEEPROM;
+  EEPROM.get(4, fromEEPROM);
+  motorVoltageScaleFactor = fromEEPROM.motorVoltageScaleFactor;
+  motorVoltageOffset= fromEEPROM.motorVoltageOffset;
+
+  Serial.println(F("Read from EEPROM:"));
+  Serial.print(F("motorVoltageScaleFactor: "));
+  Serial.println(motorVoltageScaleFactor);
+  Serial.print(F("motorVoltageOffset: "));
+  Serial.println(motorVoltageOffset);
 
   theButton.begin(theButtonPin, onButtonPress);
-  Serial.begin(115200);
   
   u8x8.begin();
   
@@ -302,7 +327,7 @@ void setup() {
 
   // check if we need to calibrate Voltages
   //
-  if (digitalRead(theButtonPin) == HIGH) { // SET BACK TO LOW
+  if (digitalRead(theButtonPin) == LOW) { 
     Serial.println(F("In Setup"));
     calibrateCtrlVoltage();
   }
@@ -335,10 +360,10 @@ void calibrateCtrlVoltage() {
 
   FreqMeasure.begin();
   
-  Serial.println(F("Searching 25 fps Ctrl Value in 600 Measurements: "));
+  Serial.println(F("Searching 25 fps Ctrl Value in 500 Measurements: "));
   do {
     dac.setVoltage(testVoltage, false);
-    while (freqCount <= 600) { 
+    while (freqCount <= 500) { 
       if (FreqMeasure.available()) {
         // average several reading together
         freqSum = freqSum + FreqMeasure.read();
@@ -374,10 +399,10 @@ void calibrateCtrlVoltage() {
   lastTooFast = 0;
   lastTooSlow = 4095;
   testVoltage = 3000;
-  Serial.println(F("Searching 9 fps Ctrl Value in 200 Measurements: "));
+  Serial.println(F("Searching 9 fps Ctrl Value in 300 Measurements: "));
   do {
     dac.setVoltage(testVoltage, false);
-    while (freqCount <= 200) { 
+    while (freqCount <= 300) { 
       if (FreqMeasure.available()) {
         // average several reading together
         freqSum = freqSum + FreqMeasure.read();
@@ -414,7 +439,14 @@ void calibrateCtrlVoltage() {
   Serial.println(motorVoltageScaleFactor);
   Serial.print(F("B: "));
   Serial.println(motorVoltageOffset);
+  
   // write testVoltage to EEPROM and global vars
+  MeasuredMotorCtrlParams justMeasured = {
+    motorVoltageScaleFactor,
+    motorVoltageOffset
+  };
+  EEPROM.put(4, justMeasured);
+  Serial.println(F("Struct written to EEPROM at Adr 4."));
     
     
   FreqMeasure.end;
@@ -581,23 +613,33 @@ void setLeds(int bargraph) {
 
 void controlProjector(int correction) {
   if (correction != lastCorrection) {
-    Serial.print(F("Frmaes off: "));
+    Serial.print(F("Frames off: "));
     Serial.println(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(2300, false);
+      dac.setVoltage(calculateVoltageForFPS(14), false);
+      Serial.print("-- ");
+      Serial.println(calculateVoltageForFPS(14));
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(2200, false);
+      dac.setVoltage(calculateVoltageForFPS(16), false);
+      Serial.print("- ");
+      Serial.println(calculateVoltageForFPS(16));
     } else if (correction == 0) {
       setLeds(0);
-      dac.setVoltage(2100, false);
+      dac.setVoltage(calculateVoltageForFPS(18), false);
+      Serial.println(calculateVoltageForFPS(18));
+      Serial.print("o ");
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(2000, false);  
+      dac.setVoltage(calculateVoltageForFPS(20), false);
+      Serial.print("+ ");
+      Serial.println(calculateVoltageForFPS(20));
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(1900, false);
+      dac.setVoltage(calculateVoltageForFPS(40), false);
+      Serial.print("++ ");
+      Serial.println(calculateVoltageForFPS(40));
     }
     lastCorrection = correction;
   }
