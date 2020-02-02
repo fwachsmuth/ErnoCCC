@@ -15,6 +15,8 @@
  * - Kondensator am Steuerausgang?
  * - Gelockt "18.00 fps" anzeigen
  * - Peephole LED entfernen
+ * - Detect a Calibration with no running motor
+ * - Auto-off fürs Display
  * 
  * - Fix Kalles 16 fps bug
  * - Create Timers for the 9 reference pulse
