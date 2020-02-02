@@ -297,11 +297,12 @@ void setup() {
 
 void calibrateVoltages() {
   digitalWrite(ssrPin, HIGH);
-  float intendedFrequency[] = {9.00, 16.00, 16.66, 18.00, 24.00, 25.00};
+  float intendedFrequency[] = {9.00, 25.00, 16.00, 24.00, 16.66, 18.00};
   float actualFrequency;
   int lastTooFast = 0;
   int lastTooSlow = 4095;
   int testVoltage = 2048;
+  int prevTestVoltage;
 
   /*
   0    = fast
@@ -313,10 +314,12 @@ void calibrateVoltages() {
   for (int i = 0; i <= 5; i++) {
     Serial.print(F("Gesuchte Frequenz: "));
     Serial.println(intendedFrequency[i]);
-    
+    Serial.print(F("Messzyklen:"));
+    Serial.println(int((intendedFrequency[i] / 8) * 200));
+   
     do {
       dac.setVoltage(testVoltage, false);
-      while (freqCount <= 100) {
+      while (freqCount <= int((intendedFrequency[i] / 8) * 200)) { // Measure longer on higher speeds
         if (FreqMeasure.available()) {
           // average several reading together
           freqSum = freqSum + FreqMeasure.read();
@@ -326,12 +329,13 @@ void calibrateVoltages() {
       actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
       freqSum = 0;
       freqCount = 0;
-      Serial.println("");
       Serial.print(F("DAC Wert:"));
       Serial.print(testVoltage);
       Serial.print(F(" - gemessene Frequenz: "));
       Serial.println(actualFrequency);
-    
+      if (abs(actualFrequency - intendedFrequency[i]) < 0.1) break;
+      if (testVoltage == prevTestVoltage) break;
+      prevTestVoltage = testVoltage;   
       if (actualFrequency > intendedFrequency[i]) { // too fast
         lastTooFast = testVoltage;
         testVoltage = (testVoltage + lastTooSlow) / 2;
@@ -340,7 +344,7 @@ void calibrateVoltages() {
         lastTooSlow = testVoltage;
         testVoltage = (testVoltage + lastTooFast) / 2;
       }
-    } while (abs(actualFrequency - intendedFrequency[i]) > 0.1);
+    } while (true);
 
     // write testVoltage to EEPROM
     Serial.print(F("Voltage Found: "));
