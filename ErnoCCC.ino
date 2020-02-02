@@ -476,7 +476,7 @@ void loop() {
   frameDifference = timerFrames - projectorFrames;
   controlProjector(frameDifference);
 
-  if ((millisNow % 1000 == 0) && (lastMillis != millisNow)) {
+  if ((millisNow % 4000 == 0) && (lastMillis != millisNow)) {
     Serial.print("Timer: ");
     Serial.print(timerFrames);
     Serial.print(", Projektor: ");
