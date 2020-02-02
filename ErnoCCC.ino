@@ -4,6 +4,8 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
+ * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
+ * - Take the smallest diff value once testVoltage keeps repeating
  * - Fix Kalles 16 fps bug
  * - Poll Button in Setup()
  * - Find out decent LED current
@@ -315,11 +317,11 @@ void calibrateVoltages() {
     Serial.print(F("Gesuchte Frequenz: "));
     Serial.println(intendedFrequency[i]);
     Serial.print(F("Messzyklen:"));
-    Serial.println(int((intendedFrequency[i] / 8) * 200));
+    Serial.println(int((intendedFrequency[i] / 8) * 120));
    
     do {
       dac.setVoltage(testVoltage, false);
-      while (freqCount <= int((intendedFrequency[i] / 8) * 200)) { // Measure longer on higher speeds
+      while (freqCount <= int((intendedFrequency[i] / 6) * 100)) { // Measure longer on higher speeds
         if (FreqMeasure.available()) {
           // average several reading together
           freqSum = freqSum + FreqMeasure.read();
