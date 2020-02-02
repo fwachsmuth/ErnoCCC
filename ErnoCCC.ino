@@ -5,20 +5,17 @@
  * 
  * To Do: 
  * Calibration
- * - EEPROMify
+ * - Capacitor on orange out to integrate voltage changes?
  * - Make calibration more efficient by something better than halfing
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
- * - Turn on LED during Claibration
+ * - Turn on LED during Calibration
  * - Flash LED after Claibration
  * - Draw some Display STuff when Calibrating
  * - Take the smallest diff value once testVoltage keeps repeating
  * - Kondensator am Steuerausgang?
  * 
  * - Fix Kalles 16 fps bug
- * - Poll Button in Setup()
- * - Find out decent LED current
  * - Create Timers for the 9 reference pulse
- * - Write Controller Calibration routine
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
  * 
  * - Control the Power LED (Stopped Mode)
@@ -627,23 +624,23 @@ void controlProjector(int correction) {
     if (correction <= -2) {
       setLeds(-2);
       dac.setVoltage(calculateVoltageForFPS(16) + offset, false);
-      Serial.print("-- ");
+      Serial.println(" --");
     } else if (correction == -1) {
       setLeds(-1);
       dac.setVoltage(calculateVoltageForFPS(17) + offset, false);
-      Serial.print("- ");
+      Serial.println(" -");
     } else if (correction == 0) {
       setLeds(0);
       dac.setVoltage(calculateVoltageForFPS(18) + offset, false);
-      Serial.print("o ");
+      Serial.println(" o ");
     } else if (correction == 1) {
       setLeds(1);
       dac.setVoltage(calculateVoltageForFPS(19) + offset, false);
-      Serial.print("+ ");
+      Serial.println(" +");
     } else if (correction >= 2) {
       setLeds(2);
       dac.setVoltage(calculateVoltageForFPS(20) + offset, false);
-      Serial.print("++ ");
+      Serial.println(" ++");
     }
     lastCorrection = correction;
   }
