@@ -12,6 +12,7 @@
  * - Flash LED after Claibration
  * - Draw some Display STuff when Calibrating
  * - Take the smallest diff value once testVoltage keeps repeating
+ * - Kondensator am Steuerausgang?
  * 
  * - Fix Kalles 16 fps bug
  * - Poll Button in Setup()
@@ -333,7 +334,7 @@ void setup() {
   }
 }
 
-int calculateVoltageForFPS(byte fps) {
+int calculateVoltageForFPS(float fps) {
   // Factor and Offset are calcuclated during Calibration.
   //
   return fps * motorVoltageScaleFactor + motorVoltageOffset;
@@ -360,10 +361,10 @@ void calibrateCtrlVoltage() {
 
   FreqMeasure.begin();
   
-  Serial.println(F("Searching 25 fps Ctrl Value in 500 Measurements: "));
+  Serial.println(F("Searching 25 fps Ctrl Value in 50 Measurements: "));
   do {
     dac.setVoltage(testVoltage, false);
-    while (freqCount <= 500) { 
+    while (freqCount <= 50) { 
       if (FreqMeasure.available()) {
         // average several reading together
         freqSum = freqSum + FreqMeasure.read();
@@ -399,10 +400,10 @@ void calibrateCtrlVoltage() {
   lastTooFast = 0;
   lastTooSlow = 4095;
   testVoltage = 3000;
-  Serial.println(F("Searching 9 fps Ctrl Value in 300 Measurements: "));
+  Serial.println(F("Searching 9 fps Ctrl Value in 50 Measurements: "));
   do {
     dac.setVoltage(testVoltage, false);
-    while (freqCount <= 300) { 
+    while (freqCount <= 50) { 
       if (FreqMeasure.available()) {
         // average several reading together
         freqSum = freqSum + FreqMeasure.read();
@@ -447,7 +448,20 @@ void calibrateCtrlVoltage() {
   };
   EEPROM.put(4, justMeasured);
   Serial.println(F("Struct written to EEPROM at Adr 4."));
-    
+  Serial.println();
+
+  Serial.print("9: ");
+  Serial.println(calculateVoltageForFPS(9));
+  Serial.print("16: ");
+  Serial.println(calculateVoltageForFPS(16));
+  Serial.print("16.66: ");
+  Serial.println(calculateVoltageForFPS(float(16.66)));
+  Serial.print("18: ");
+  Serial.println(calculateVoltageForFPS(18));
+  Serial.print("24: ");
+  Serial.println(calculateVoltageForFPS(24));
+  Serial.print("25: ");
+  Serial.println(calculateVoltageForFPS(25));
     
   FreqMeasure.end;
 }
@@ -612,34 +626,35 @@ void setLeds(int bargraph) {
 
 
 void controlProjector(int correction) {
+  const int offset = 0;
   if (correction != lastCorrection) {
     Serial.print(F("Frames off: "));
     Serial.println(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(calculateVoltageForFPS(14), false);
+      dac.setVoltage(calculateVoltageForFPS(15) + offset, false);
       Serial.print("-- ");
-      Serial.println(calculateVoltageForFPS(14));
+      Serial.println(calculateVoltageForFPS(15) + offset);
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(calculateVoltageForFPS(16), false);
+      dac.setVoltage(calculateVoltageForFPS(17) + offset, false);
       Serial.print("- ");
-      Serial.println(calculateVoltageForFPS(16));
+      Serial.println(calculateVoltageForFPS(17) + offset);
     } else if (correction == 0) {
       setLeds(0);
-      dac.setVoltage(calculateVoltageForFPS(18), false);
-      Serial.println(calculateVoltageForFPS(18));
+      dac.setVoltage(calculateVoltageForFPS(18) + offset, false);
+      Serial.println(calculateVoltageForFPS(18) + offset);
       Serial.print("o ");
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(calculateVoltageForFPS(20), false);
+      dac.setVoltage(calculateVoltageForFPS(19) + offset, false);
       Serial.print("+ ");
-      Serial.println(calculateVoltageForFPS(20));
+      Serial.println(calculateVoltageForFPS(19) + offset);
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(calculateVoltageForFPS(40), false);
+      dac.setVoltage(calculateVoltageForFPS(21) + offset, false);
       Serial.print("++ ");
-      Serial.println(calculateVoltageForFPS(40));
+      Serial.println(calculateVoltageForFPS(21) + offset);
     }
     lastCorrection = correction;
   }
