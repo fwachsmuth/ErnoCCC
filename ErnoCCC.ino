@@ -13,6 +13,8 @@
  * - Draw some Display STuff when Calibrating
  * - Take the smallest diff value once testVoltage keeps repeating
  * - Kondensator am Steuerausgang?
+ * - Gelockt "18.00 fps" anzeigen
+ * - Peephole LED entfernen
  * 
  * - Fix Kalles 16 fps bug
  * - Create Timers for the 9 reference pulse
@@ -72,11 +74,11 @@ SwitchManager theButton;
 #define ssrPin            6
 #define ledPwmPin         5
 
-#define ledSlowerRed      A0  //  --
-#define ledSlowerYellow   A1  //  -
+#define ledSlowerRed      7   //  --  Mirrored, since they are visible through a Mirror. Doh!
+#define ledSlowerYellow   A3  //  -
 #define ledGreen          A2  //  o
-#define ledFasterYellow   A3  //  +
-#define ledFasterRed      7  //  ++
+#define ledFasterYellow   A1  //  +
+#define ledFasterRed      A0  //  ++
 
 
 
@@ -566,10 +568,10 @@ ISR(TIMER1_COMPA_vect) {
 void projectorCountISR() {
   if (projectorDivider == 0) {
     projectorFrames++;
-    projectorFrames++;  // Temp fix until the Timer constants are fixed
+//    projectorFrames++;  // Temp fix until the Timer constants are fixed
   }
   projectorDivider++;
-  projectorDivider %= (segmentCount * 2); // we are triggering on CHANGE
+  projectorDivider %= (segmentCount); // we are triggering on CHANGE
 }
 
 void setLeds(int bargraph) {
@@ -619,28 +621,28 @@ void setLeds(int bargraph) {
 void controlProjector(int correction) {
   const int offset = 0;
   if (correction != lastCorrection) {
-    Serial.print(F("Frames off: "));
-    Serial.print(correction);
+//    Serial.print(F("Frames off: "));
+//    Serial.print(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(calculateVoltageForFPS(16) + offset, false);
-      Serial.println(" --");
+      dac.setVoltage(calculateVoltageForFPS(16.5) + offset, false);
+      Serial.println("--");
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(calculateVoltageForFPS(17) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(17.5) + offset, false);
       Serial.println(" -");
     } else if (correction == 0) {
       setLeds(0);
       dac.setVoltage(calculateVoltageForFPS(18) + offset, false);
-      Serial.println(" o ");
+      Serial.println("  o");
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(calculateVoltageForFPS(19) + offset, false);
-      Serial.println(" +");
+      dac.setVoltage(calculateVoltageForFPS(18.5) + offset, false);
+      Serial.println("   +");
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(calculateVoltageForFPS(20) + offset, false);
-      Serial.println(" ++");
+      dac.setVoltage(calculateVoltageForFPS(19.5) + offset, false);
+      Serial.println("   ++");
     }
     lastCorrection = correction;
   }
