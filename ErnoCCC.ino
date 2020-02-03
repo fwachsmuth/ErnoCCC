@@ -17,6 +17,7 @@
  * - Peephole LED entfernen
  * - Detect a Calibration with no running motor
  * - Auto-off fürs Display
+ * - Build a STOP function (even when motor is on)
  * 
  * - Fix Kalles 16 fps bug
  * - Create Timers for the 9 reference pulse
@@ -29,7 +30,7 @@
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
  * - Synchronuous Mode via Impulses
  * - Add an accelerated rotary Encoder to target arbitrary film positions
- * - support electronic cutting lists to set all the marks
+ * - support electronic cutting lists to set all the marks http://www.niwa.nu/2013/05/how-to-read-an-edl/
  * 
  * PCB (Rev.B):
  * - R9/10 falsche Werte bei Mouser
