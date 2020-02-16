@@ -142,7 +142,7 @@ struct MeasuredMotorCtrlParams {
 #define FPS_9            4
 #define FPS_16_2_3       5
 
-uint8_t fpsState       = 0;
+uint8_t fpsState       = FPS_UNLOCKED;
 uint8_t prevPaintedFps = 0;
 
 // ---- Display state machine ----------------------------------
@@ -813,30 +813,30 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
       switch (state) {
         case STATE_RUNNING:
           fpsState++;
-          if (fpsState == FPS_UNLOCKED + 1) {
+          
+          if (fpsState == FPS_UNLOCKED + 1) {     // Draw a Lock 
             u8x8.drawTile(12,6,2,lockedLockTop);
             u8x8.drawTile(14,6,1,emptyTile);
             u8x8.setFont(u8x8_font_7x14B_1x2_n);
             u8x8.setCursor(5,6);
-            u8x8.print("  ");s
-            
-            fpsState = getFpsState(playbackFps);
+            drawCurrentFps(false, false);
+          } else {
+            drawCurrentFps(false, true);
+
+            // fpsState = getFpsState(playbackFps);
             Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
             FreqMeasure.end();
-
-            Serial.print(F("Asking for new Timer State: "));
-            Serial.println(getFpsState(playbackFps));
+  
+            Serial.print(F("Requesting new Timer State: "));
+            Serial.println(fpsState);
             
-            setupTimer1forFps(getFpsState(playbackFps)); 
+            setupTimer1forFps(fpsState); 
             
             attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
             Serial.println(F("Crystal Control ON"));
             digitalWrite(ssrPin, HIGH);
             
             
-            drawCurrentFps(false, false);
-          } else {
-            drawCurrentFps(false, true);
           }
           break;
         case STATE_STOPPED:
@@ -874,23 +874,23 @@ void drawCurrentFps(const bool redrawCurrentTime, const bool updateEEPROM) {
       fpsState = FPS_18;
     case FPS_18:
       fps = 18;
-      u8x8.print(18);
+      u8x8.print("18.00");
       break;
     case FPS_24:
       fps = 24;
-      u8x8.print(24);
+      u8x8.print("24.00");
       break;
     case FPS_25:
       fps = 25;
-      u8x8.print(25);
+      u8x8.print("25.00");
       break;
     case FPS_9:
       fps = 9;
-      u8x8.print(" 9");
+      u8x8.print(" 9.00");
       break;
     case FPS_16_2_3:
       fps = 50/3.0;
-      u8x8.print(16);
+      u8x8.print("16   ");
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
       u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
   }
