@@ -751,8 +751,8 @@ void drawState() {
       Serial.println(F("Freq-Measuer OFF, but do NOT start the Timer1!"));
       FreqMeasure.end();
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
-      u8x8.setCursor(1,6);
-      u8x8.print(F("shot @     fps"));
+      u8x8.setCursor(0,6);
+      u8x8.print(F("shot @       fps"));
       fpsState = getFpsState(filmFps);
       drawCurrentFps(false, false);
       if (checkWriteToEEPROMInLoop) {
@@ -777,10 +777,10 @@ void drawState() {
     case STATE_RUNNING:
       checkRequiredMillisInLoop = false;
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
-      u8x8.setCursor(8,6);
-      u8x8.print("fps");
-      u8x8.setCursor(1,6);
-      u8x8.print(" ");
+      u8x8.setCursor(7,6);
+      u8x8.print(" fps     ");
+      u8x8.setCursor(0,6);
+      u8x8.print("  ");
       u8x8.drawTile(14,7,1,emptyTile);
       u8x8.drawTile(12,7,2,lockBottom);
       u8x8.drawTile(12,6,3,unlockedLockTop);
@@ -865,9 +865,9 @@ void drawCurrentFps(const bool redrawCurrentTime, const bool updateEEPROM) {
   float prevFilmFps = filmFps;
   
   u8x8.setFont(u8x8_font_7x14B_1x2_n);
-  u8x8.setCursor(((state == STATE_RUNNING) ? 4 : 10),6);
-  u8x8.print(" ");
-  u8x8.setCursor(((state == STATE_RUNNING) ? 2 : 8),6);
+  u8x8.setCursor(((state == STATE_RUNNING) ? 4 : 9),6);
+  u8x8.print("x");
+  u8x8.setCursor(((state == STATE_RUNNING) ? 2 : 7),6);
   
   switch (fpsState) {
     default:
@@ -891,8 +891,8 @@ void drawCurrentFps(const bool redrawCurrentTime, const bool updateEEPROM) {
     case FPS_16_2_3:
       fps = 50/3.0;
       u8x8.print("16   ");
-      u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),6,1,twoThirdsTop);
-      u8x8.drawTile(((state == STATE_RUNNING) ? 4 : 10),7,1,twoThirdsBottom);
+      u8x8.drawTile(((state == STATE_RUNNING) ? 5 : 10),6,1,twoThirdsTop);
+      u8x8.drawTile(((state == STATE_RUNNING) ? 5 : 10),7,1,twoThirdsBottom);
   }
   if (state == STATE_RUNNING) playbackFps = fps;
   else {
