@@ -15,7 +15,6 @@
  * - Flash LED after Caibration
  * - Draw some Display Stuff when Calibrating
  * - Take the smallest diff value in Calibration once testVoltage keeps repeating
- * - Show"18.00 fps" when locked (extra digits)
  * - Detect a Calibration with no running motor
  * - Auto-off fürs Display
  * - Build a STOP function (even when motor is on)
@@ -813,7 +812,11 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
       switch (state) {
         case STATE_RUNNING:
           fpsState++;
-          
+
+          Serial.println();
+          Serial.println(fpsState);
+          Serial.println(); 
+        
           if (fpsState == FPS_UNLOCKED + 1) {     // Draw a Lock 
             u8x8.drawTile(12,6,2,lockedLockTop);
             u8x8.drawTile(14,6,1,emptyTile);
@@ -822,22 +825,18 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
             drawCurrentFps(false, false);
           } else {
             drawCurrentFps(false, true);
-
-            // fpsState = getFpsState(playbackFps);
-            Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
-            FreqMeasure.end();
-  
-            Serial.print(F("Requesting new Timer State: "));
-            Serial.println(fpsState);
-            
-            setupTimer1forFps(fpsState); 
-            
-            attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
-            Serial.println(F("Crystal Control ON"));
-            digitalWrite(ssrPin, HIGH);
-            
-            
           }
+          
+//        Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
+          FreqMeasure.end();
+
+          Serial.print(F("Requesting new Timer State: "));
+          Serial.println(fpsState);
+          setupTimer1forFps(fpsState); 
+          
+          attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
+          Serial.println(F("Crystal Control ON"));
+          digitalWrite(ssrPin, HIGH);
           break;
         case STATE_STOPPED:
           fpsState++;
