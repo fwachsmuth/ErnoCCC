@@ -5,11 +5,13 @@
  * 
  * To Do: 
  * - Make the Speed Control fps agnostic
- *    - rename filmFps with shotFps
+ *    line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
+ *    - rename filmFps with shotFps or so
  *    - write latest filmFps to DAC as well
  *    - constrain correction (if neccesary, doesn't seem so)
  *    - replace "soll" in var names
  * 
+ * - Remember the last Playback Speed and restore it when locking next time
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
  * - Turn on LED during Calibration
  * - Flash LED after Caibration
@@ -626,25 +628,23 @@ void controlProjector(int correction) {
 //    Serial.print(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(calculateVoltageForFPS(fps - 3), false);
       Serial.println("--");
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(calculateVoltageForFPS(fps - 1), false);
       Serial.println(" -");
     } else if (correction == 0) {
       setLeds(0);
-      dac.setVoltage(calculateVoltageForFPS(fps), false);
       Serial.println("  o");
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(calculateVoltageForFPS(fps + 1), false);
       Serial.println("   +");
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(calculateVoltageForFPS(fps + 3), false);
       Serial.println("   ++");
     }
+
+    dac.setVoltage(calculateVoltageForFPS(fps + correction ), false);
+    
     lastCorrection = correction;
   }
 }
