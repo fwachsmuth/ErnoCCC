@@ -5,10 +5,14 @@
  * 
  * To Do: 
  * - Make the Speed Control fps agnostic
+ *    - rename filmFps with shotFps
+ *    - write latest filmFps to DAC as well
+ *    - constrain correction (if neccesary, doesn't seem so)
+ *    - replace "soll" in var names
+ * 
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
- *  
  * - Turn on LED during Calibration
- * - Flash LED after Claibration
+ * - Flash LED after Caibration
  * - Draw some Display Stuff when Calibrating
  * - Take the smallest diff value in Calibration once testVoltage keeps repeating
  * - Show"18.00 fps" when locked (extra digits)
@@ -152,8 +156,8 @@ uint8_t prevPaintedFps = 0;
 
 
 long prevFrameCount  = -999; // Magic Number to make sure we immediately draw a frame count
-double freqSum=0;
-int freqCount=0;
+double freqSum = 0;
+int freqCount = 0;
 float frequency;
 unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enough 
 
@@ -460,19 +464,19 @@ void calibrateCtrlVoltage() {
 // ******************************************************************************
 void loop() {
 
-  // Lets contrl the Motor!
+  // Lets control the Motor!
   //
   millisNow = millis();
 
   frameDifference = timerFrames - projectorFrames;
   controlProjector(frameDifference);
 
-  if ((millisNow % 4000 == 0) && (lastMillis != millisNow)) {
+  if ((millisNow % 2000 == 0) && (lastMillis != millisNow)) {
     Serial.print("Timer: ");
     Serial.print(timerFrames);
     Serial.print(", Projektor: ");
     Serial.print(projectorFrames);
-    Serial.print(", Differenz ***: ");
+    Serial.print(", Difference ***: ");
     Serial.println(frameDifference);
     lastMillis = millisNow;
   }  
@@ -618,49 +622,51 @@ void setLeds(int bargraph) {
 
 
 void controlProjector(int correction) {
-  const int offset = 0;
   if (correction != lastCorrection) {
 //    Serial.print(F("Frames off: "));
 //    Serial.print(correction);
     if (correction <= -2) {
       setLeds(-2);
-      dac.setVoltage(calculateVoltageForFPS(16.5) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(fps - 3), false);
       Serial.println("--");
     } else if (correction == -1) {
       setLeds(-1);
-      dac.setVoltage(calculateVoltageForFPS(17.5) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(fps - 1), false);
       Serial.println(" -");
     } else if (correction == 0) {
       setLeds(0);
-      dac.setVoltage(calculateVoltageForFPS(18) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(fps), false);
       Serial.println("  o");
     } else if (correction == 1) {
       setLeds(1);
-      dac.setVoltage(calculateVoltageForFPS(18.5) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(fps + 1), false);
       Serial.println("   +");
     } else if (correction >= 2) {
       setLeds(2);
-      dac.setVoltage(calculateVoltageForFPS(19.5) + offset, false);
+      dac.setVoltage(calculateVoltageForFPS(fps + 3), false);
       Serial.println("   ++");
     }
     lastCorrection = correction;
   }
 }
 
-void stopTimer1() {
+void stopTimer1() {   // Stops Timer1, for when we are not in craystal running mode
   // TCCR1B &= ~(1 << CS11);
   noInterrupts();
   TIMSK1 &= ~(1 << OCIE1A);
   interrupts();
 }
 
-bool setupTimer1forFps(byte sollfps) {
+bool setupTimer1forFps(byte sollFpsState) {
   // start with a new sync point, no need to catch up differences from before.
   timerFrames = 0;
   projectorFrames = 0;
   timerDivider = 0;
-  
-  if (sollfps == 16 || sollfps == 1666 || sollfps ==  18 || sollfps == 24 || sollfps == 25) {
+
+  if (sollFpsState >= 1 && sollFpsState <= 5) {
+    Serial.print(F("New Timer FPS State: "));
+    Serial.println(sollFpsState);
+    
     noInterrupts();
     // Clear registers
     TCCR1A = 0;
@@ -669,20 +675,29 @@ bool setupTimer1forFps(byte sollfps) {
     // CTC
     TCCR1B |= (1 << WGM12);
 
-    switch (sollfps) {
-      case 16:
-        OCR1A = 15624;    // 16 Hz (16000000/((15624+1)*64))
-        TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
-        timerFactor = 1;
+    switch (sollFpsState) {
+//      case 16:
+//        OCR1A = 15624;    // 16 Hz (16000000/((15624+1)*64))
+//        TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
+//        timerFactor = 1;
+//
+//        break;
 
+      case FPS_9:
+        OCR1A = 10100;    // 198.000198000198 Hz (16000000/((10100+1)*8)),
+        //              divided by 22 is 9,000009.. Hz
+        //
+        TCCR1B |= (1 << CS11);  // Prescaler 8
+        timerFactor = 22;
+        
         break;
-      case 1666:
+      case FPS_16_2_3:
         OCR1A = 14999;    // 16 2/3 Hz (16000000/((14999+1)*64))
         TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
         timerFactor = 1;
 
         break;
-      case 18:
+      case FPS_18:
         OCR1A = 10100;    // 198.000198000198 Hz (16000000/((10100+1)*8)),
         //              divided by 11 is 18.000018.. Hz
         //              or 18 2/111,111
@@ -692,7 +707,7 @@ bool setupTimer1forFps(byte sollfps) {
         timerFactor = 11;
 
         break;
-      case 24:
+      case FPS_24:
         OCR1A = 60605;    // 264.000264000264 Hz (16000000/((60605+1)*1)),
         //               divided by 11 is 24.000024.. Hz
         //               or 24 8/333,333
@@ -702,7 +717,7 @@ bool setupTimer1forFps(byte sollfps) {
         timerFactor = 11;
 
         break;
-      case 25:
+      case FPS_25:
         OCR1A = 624;      // 25 Hz (16000000/((624+1)*1024))
         TCCR1B |= (1 << CS12) | (1 << CS10); // Prescaler 1024
         timerFactor = 1;
@@ -793,7 +808,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
   // interval will be how many ms between the opposite state and this one
   // whichPin will be which pin caused this change (so you can share the function amongst multiple switches)
 
-  if (newState == HIGH && interval < 1500) { //on button release
+  if (newState == HIGH && interval < 1500) { // on button release
     if (!ignoreNextButtonPress) {
       switch (state) {
         case STATE_RUNNING:
@@ -803,19 +818,26 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
             u8x8.drawTile(14,6,1,emptyTile);
             u8x8.setFont(u8x8_font_7x14B_1x2_n);
             u8x8.setCursor(5,6);
-            u8x8.print("  ");
+            u8x8.print("  ");s
+            
             fpsState = getFpsState(playbackFps);
             Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
             FreqMeasure.end();
+
+            Serial.print(F("Asking for new Timer State: "));
+            Serial.println(getFpsState(playbackFps));
             
-            setupTimer1forFps(18); // takes 16, 1666, 18, 24 or 25 only
+            setupTimer1forFps(getFpsState(playbackFps)); 
+            
             attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
             Serial.println(F("Crystal Control ON"));
             digitalWrite(ssrPin, HIGH);
             
             
             drawCurrentFps(false, false);
-          } else drawCurrentFps(false, true);
+          } else {
+            drawCurrentFps(false, true);
+          }
           break;
         case STATE_STOPPED:
           fpsState++;
