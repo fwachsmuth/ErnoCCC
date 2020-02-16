@@ -4,44 +4,40 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
- * Calibration
- * - Capacitor on orange out to integrate voltage changes?
- * - Make calibration more efficient by something better than halfing
+ * - Make the Speed Control fps agnostic
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
+ *  
  * - Turn on LED during Calibration
  * - Flash LED after Claibration
- * - Draw some Display STuff when Calibrating
- * - Take the smallest diff value once testVoltage keeps repeating
- * - Kondensator am Steuerausgang?
- * - Gelockt "18.00 fps" anzeigen
- * - Peephole LED entfernen
+ * - Draw some Display Stuff when Calibrating
+ * - Take the smallest diff value in Calibration once testVoltage keeps repeating
+ * - Show"18.00 fps" when locked (extra digits)
  * - Detect a Calibration with no running motor
  * - Auto-off fürs Display
  * - Build a STOP function (even when motor is on)
- * 
+ *  
  * - Fix Kalles 16 fps bug
  * - Create Timers for the 9 reference pulse
  * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
- * 
  * - Control the Power LED (Stopped Mode)
-  
+ *  
+ *  
+ * Harware  
+ * - Remove / Omit Peephole LED 
+ * - Capacitor on orange out to integrate voltage changes?
+ * 
  * 
  * Future Thoughts:
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
  * - Synchronuous Mode via Impulses
  * - Add an accelerated rotary Encoder to target arbitrary film positions
  * - support electronic cutting lists to set all the marks http://www.niwa.nu/2013/05/how-to-read-an-edl/
+ * http://www.edlmax.com/SMPTETimeCodeConversion.htm
  * 
  * PCB (Rev.B):
  * - R9/10 falsche Werte bei Mouser
  * 
  * Notes: 
- * 
- * - D5 Pullup (Pulldown?)
- * - LED Ports down
- * - 5 LEDs ansteuern
- * - D6 SSR ansteuern
- * - D5 LED PWM
  * 
  * EEPROM 
  * 0: filmFps
