@@ -340,7 +340,9 @@ void setup() {
 int calculateVoltageForFPS(float fps) {
   // Factor and Offset are calcuclated during Calibration.
   //
-  return constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095);
+  Serial.println(int(constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095)));
+  return int(constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095));
+  
 }
 
 void calibrateCtrlVoltage() {
@@ -643,7 +645,7 @@ void controlProjector(int correction) {
       Serial.println("   ++");
     }
 
-    dac.setVoltage(calculateVoltageForFPS(fps + correction ), false);
+    dac.setVoltage(calculateVoltageForFPS(fps + correction * 2), false);
     
     lastCorrection = correction;
   }
