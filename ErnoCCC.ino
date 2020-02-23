@@ -4,12 +4,18 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
- * - Make the Speed Control fps agnostic
- *    line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
+ *    - line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
  *    - rename filmFps with shotFps or so
  *    - write latest filmFps to DAC as well
  *    - constrain correction (if neccesary, doesn't seem so)
  *    - replace "soll" in var names
+ *    
+ *    Dynamic Baseline Sdjustment?
+ *    Detect uncalibrated launch
+ *    Prepare for Trimpot adjustment
+ *    Stop the Press
+ *    Encoder for Target Frame entry?
+ *    Fidicules in the stencil
  * 
  * - Remember the last Playback Speed and restore it when locking next time
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
