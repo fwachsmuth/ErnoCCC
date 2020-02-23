@@ -10,12 +10,46 @@
  *    - constrain correction (if neccesary, doesn't seem so)
  *    - replace "soll" in var names
  *    
- *    Dynamic Baseline Sdjustment?
+ *    Dynamic Baseline Adjustment?
  *    Detect uncalibrated launch
- *    Prepare for Trimpot adjustment
- *    Stop the Press
+ *    Prepare for Trimpot adjustment:
+ *       DAC ne 4096 schicken
+ *       Poti drehen bis Motor nicht mal mehr brummt
+ *       
+          #include <Wire.h>
+          #include <Arduino.h>
+          #include <Adafruit_MCP4725.h> // Fancy DAC for voltage control
+          #include <SwitchManager.h>    // Button Handling and Debouncing, http://www.gammon.com.au/switches
+          
+          Adafruit_MCP4725 dac;                                   // Instantiate the DAC
+          #define ledPwmPin         5
+          #define ssrPin            6
+          
+          void setup() {
+            Serial.begin(115200);
+            dac.begin(0x60);
+            pinMode(ledPwmPin, OUTPUT);
+            pinMode(ssrPin, OUTPUT);
+            digitalWrite(ssrPin, HIGH);
+            analogWrite(ledPwmPin, 1);
+          
+          }
+          
+          void loop() {
+            // put your main code here, to run repeatedly:
+            dac.setVoltage(4096, false);
+          }
  *    Encoder for Target Frame entry?
  *    Fidicules in the stencil
+ *    SPI nach aussen legen
+ *    Reset Switch?
+ *    TP DAC
+ *    TP VCTRL
+ *    GND to J7
+ *    SSR / GRAY an TPs, weg von J7
+ *    Neuen R15 kaufen
+ *    
+ *    
  * 
  * - Remember the last Playback Speed and restore it when locking next time
  * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
