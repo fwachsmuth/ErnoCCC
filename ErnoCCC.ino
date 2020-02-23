@@ -32,27 +32,29 @@
             pinMode(ssrPin, OUTPUT);
             digitalWrite(ssrPin, HIGH);
             analogWrite(ledPwmPin, 1);
-          
           }
           
           void loop() {
             // put your main code here, to run repeatedly:
             dac.setVoltage(4096, false);
           }
- *    Encoder for Target Frame entry?
- *    Fidicules in the stencil
+
+PCB:
  *    SPI nach aussen legen
  *    Reset Switch?
  *    TP DAC
  *    TP VCTRL
  *    GND to J7
  *    SSR / GRAY an TPs, weg von J7
+          
+ *    Encoder for Target Frame entry?
+ *    Fidicules in the stencil
  *    Neuen R15 kaufen
  *    
  *    
  * 
  * - Remember the last Playback Speed and restore it when locking next time
- * - Do not devide Encoder Impulses and take both edges; recalculate Timer Dividers -> 4x faster controlling!
+ * - Do not devide Encoder Impulses (segmentCount) and take both edges; recalculate Timer Dividers -> 4x faster controlling!
  * - Turn on LED during Calibration
  * - Flash LED after Caibration
  * - Draw some Display Stuff when Calibrating
