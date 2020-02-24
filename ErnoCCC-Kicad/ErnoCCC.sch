@@ -430,7 +430,7 @@ F 3 "" H 2350 5700 50  0001 C CNN
 $EndComp
 Connection ~ 2350 5700
 Connection ~ 2350 6100
-Text Label 4500 7000 0    50   ~ 0
+Text Label 4550 7000 0    50   ~ 0
 INT0
 Text Label 4500 6000 0    50   ~ 0
 INT1
@@ -438,7 +438,7 @@ Wire Wire Line
 	4450 7000 4500 7000
 Wire Wire Line
 	4450 6000 4500 6000
-Text Label 4500 7100 0    50   ~ 0
+Text Label 4550 7100 0    50   ~ 0
 ICP1
 $Comp
 L Connector:TestPoint TP1
@@ -1724,11 +1724,11 @@ Wire Wire Line
 Text Label 2150 2600 0    50   ~ 0
 D10
 $Comp
-L Connector_Generic:Conn_01x05 J7
+L Connector_Generic:Conn_01x07 J7
 U 1 1 5E107107
 P 5400 4900
 F 0 "J7" H 5318 4375 50  0000 C CNN
-F 1 "Conn_01x05" H 5318 4466 50  0000 C CNN
+F 1 "Conn_01x07" H 5318 4466 50  0000 C CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal_shorter" H 5400 4900 50  0001 C CNN
 F 3 "~" H 5400 4900 50  0001 C CNN
 	1    5400 4900
@@ -1736,7 +1736,7 @@ F 3 "~" H 5400 4900 50  0001 C CNN
 $EndComp
 Text Label 5700 4700 0    50   ~ 0
 D10
-Text Label 4500 7200 0    50   ~ 0
+Text Label 4550 7200 0    50   ~ 0
 GRAY-A
 Text Label 4500 6100 0    50   ~ 0
 GRAY-B
@@ -1744,8 +1744,6 @@ Wire Wire Line
 	4450 6000 4450 6100
 Wire Wire Line
 	4450 6100 4500 6100
-Wire Wire Line
-	4500 7000 4500 7200
 Wire Wire Line
 	5600 4700 5700 4700
 Wire Wire Line
@@ -2256,4 +2254,92 @@ Text Label 2150 3600 0    50   ~ 0
 A3
 Text Label 5700 4800 0    50   ~ 0
 A3
+$Comp
+L Connector:TestPoint TP5
+U 1 1 5E55D944
+P 7500 3600
+F 0 "TP5" V 7454 3788 50  0000 L CNN
+F 1 "DAC" V 7545 3788 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 7700 3600 50  0001 C CNN
+F 3 "~" H 7700 3600 50  0001 C CNN
+	1    7500 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7500 3600 7500 3500
+$Comp
+L Connector:TestPoint TP4
+U 1 1 5E5787D7
+P 6750 1250
+F 0 "TP4" V 6704 1438 50  0000 L CNN
+F 1 "VCTRL" V 6795 1438 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 6950 1250 50  0001 C CNN
+F 3 "~" H 6950 1250 50  0001 C CNN
+	1    6750 1250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6750 1150 6750 1250
+Text Label 5700 4600 0    50   ~ 0
+5V
+Text Label 5700 5200 0    50   ~ 0
+GNDD
+Wire Wire Line
+	5600 4600 5700 4600
+Wire Wire Line
+	5600 5200 5700 5200
+$Comp
+L Connector:TestPoint TP7
+U 1 1 5E645CBA
+P 4500 7300
+F 0 "TP7" V 4600 7300 50  0000 L CNN
+F 1 "GRAY-A" V 4500 7500 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 4700 7300 50  0001 C CNN
+F 3 "~" H 4700 7300 50  0001 C CNN
+	1    4500 7300
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP6
+U 1 1 5E646616
+P 4450 6200
+F 0 "TP6" V 4550 6200 50  0000 L CNN
+F 1 "GRAY-B" V 4450 6400 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 4650 6200 50  0001 C CNN
+F 3 "~" H 4650 6200 50  0001 C CNN
+	1    4450 6200
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4500 7000 4500 7100
+Wire Wire Line
+	4450 6100 4450 6200
+Connection ~ 4450 6100
+Wire Wire Line
+	4550 7000 4500 7000
+Connection ~ 4500 7000
+Wire Wire Line
+	4550 7100 4500 7100
+Connection ~ 4500 7100
+Wire Wire Line
+	4500 7100 4500 7200
+Wire Wire Line
+	4550 7200 4500 7200
+Connection ~ 4500 7200
+Wire Wire Line
+	4500 7200 4500 7300
+$Comp
+L Connector:TestPoint TP8
+U 1 1 5E6E25FF
+P 8900 2900
+F 0 "TP8" V 8800 2950 50  0000 L CNN
+F 1 "GRAY-B" V 8900 3100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 9100 2900 50  0001 C CNN
+F 3 "~" H 9100 2900 50  0001 C CNN
+	1    8900 2900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8900 2900 8900 3000
+Connection ~ 8900 3000
 $EndSCHEMATC
