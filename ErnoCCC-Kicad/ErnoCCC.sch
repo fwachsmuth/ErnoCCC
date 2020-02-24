@@ -683,7 +683,7 @@ Text Label 2150 3400 0    50   ~ 0
 <
 Text Label 2150 3500 0    50   ~ 0
 o
-Text Label 2150 3600 0    50   ~ 0
+Text Label 2150 2500 0    50   ~ 0
 >
 Text Label 2150 4800 0    50   ~ 0
 >>
@@ -1746,12 +1746,6 @@ Wire Wire Line
 	4450 6100 4500 6100
 Wire Wire Line
 	4500 7000 4500 7200
-Text Label 5700 5100 0    50   ~ 0
-GRAY-A
-Text Label 5700 5000 0    50   ~ 0
-GRAY-B
-Text Label 5700 4900 0    50   ~ 0
-SSR
 Wire Wire Line
 	5600 4700 5700 4700
 Wire Wire Line
@@ -2176,12 +2170,8 @@ Wire Wire Line
 	7300 3150 7500 3150
 Wire Wire Line
 	5800 1050 5750 1050
-Text Label 2150 2500 0    50   ~ 0
-D9
 Wire Wire Line
 	2000 2600 2150 2600
-Text Label 5700 4800 0    50   ~ 0
-D9
 Wire Wire Line
 	5600 4800 5700 4800
 Wire Wire Line
@@ -2256,10 +2246,14 @@ F 3 "" H 6650 3850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6650 3600 6650 3850
-Text Label 5700 5200 0    50   ~ 0
+Text Label 5700 4900 0    50   ~ 0
 MOSI
-Text Label 5700 5300 0    50   ~ 0
+Text Label 5700 5000 0    50   ~ 0
 MISO
-Text Label 5700 5400 0    50   ~ 0
+Text Label 5700 5100 0    50   ~ 0
 SCK
+Text Label 2150 3600 0    50   ~ 0
+A3
+Text Label 5700 4800 0    50   ~ 0
+A3
 $EndSCHEMATC
