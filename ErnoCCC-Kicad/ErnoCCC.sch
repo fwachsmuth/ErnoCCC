@@ -2355,11 +2355,11 @@ F 3 "~" H 5600 5400 50  0001 C CNN
 $EndComp
 Text Label 5850 5300 0    50   ~ 0
 SCL
-Text Label 5850 5400 0    50   ~ 0
+Text Label 5850 5200 0    50   ~ 0
 SDA
 Text Label 5850 5500 0    50   ~ 0
 GNDD
-Text Label 5850 5200 0    50   ~ 0
+Text Label 5850 5400 0    50   ~ 0
 5V
 Wire Wire Line
 	5800 5200 5850 5200
