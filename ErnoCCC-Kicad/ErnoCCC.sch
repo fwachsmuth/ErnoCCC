@@ -1726,15 +1726,15 @@ D10
 $Comp
 L Connector_Generic:Conn_01x07 J7
 U 1 1 5E107107
-P 5400 4900
-F 0 "J7" H 5318 4375 50  0000 C CNN
-F 1 "Conn_01x07" H 5318 4466 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Horizontal_shorter" H 5400 4900 50  0001 C CNN
-F 3 "~" H 5400 4900 50  0001 C CNN
-	1    5400 4900
+P 5600 4450
+F 0 "J7" H 5518 3925 50  0000 C CNN
+F 1 "Conn_01x07" H 5518 4016 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x07_P2.54mm_Vertical" H 5600 4450 50  0001 C CNN
+F 3 "~" H 5600 4450 50  0001 C CNN
+	1    5600 4450
 	-1   0    0    1   
 $EndComp
-Text Label 5700 4700 0    50   ~ 0
+Text Label 5900 4250 0    50   ~ 0
 D10
 Text Label 4550 7200 0    50   ~ 0
 GRAY-A
@@ -1745,11 +1745,11 @@ Wire Wire Line
 Wire Wire Line
 	4450 6100 4500 6100
 Wire Wire Line
-	5600 4700 5700 4700
+	5800 4250 5900 4250
 Wire Wire Line
-	5600 5000 5700 5000
+	5800 4550 5900 4550
 Wire Wire Line
-	5600 5100 5700 5100
+	5800 4650 5900 4650
 $Comp
 L Jumper:SolderJumper_3_Bridged12 JP3
 U 1 1 5E222D66
@@ -1903,7 +1903,7 @@ L Device:R_Small R15
 U 1 1 5E206C0A
 P 5600 1350
 F 0 "R15" H 5750 1300 50  0000 C CNN
-F 1 "22k" H 5750 1400 50  0000 C CNN
+F 1 "20k" H 5750 1400 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric" H 5600 1350 50  0001 C CNN
 F 3 "~" H 5600 1350 50  0001 C CNN
 	1    5600 1350
@@ -2135,10 +2135,6 @@ Text Label 7500 3500 0    50   ~ 0
 DAC
 Wire Wire Line
 	7450 3500 7500 3500
-Text Label 6600 3500 2    50   ~ 0
-SDA
-Text Label 6600 3400 2    50   ~ 0
-SCL
 $Comp
 L Device:C_Small C17
 U 1 1 5E28031F
@@ -2171,9 +2167,9 @@ Wire Wire Line
 Wire Wire Line
 	2000 2600 2150 2600
 Wire Wire Line
-	5600 4800 5700 4800
+	5800 4350 5900 4350
 Wire Wire Line
-	5600 4900 5700 4900
+	5800 4450 5900 4450
 $Comp
 L Device:CP_Small C18
 U 1 1 5E1CEF91
@@ -2214,10 +2210,6 @@ Wire Wire Line
 Wire Wire Line
 	10050 2800 10050 2900
 Connection ~ 10050 2900
-Wire Wire Line
-	6650 3400 6600 3400
-Wire Wire Line
-	6650 3500 6600 3500
 $Comp
 L Device:D_Schottky_Small D10
 U 1 1 5E56B5CC
@@ -2244,15 +2236,15 @@ F 3 "" H 6650 3850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6650 3600 6650 3850
-Text Label 5700 4900 0    50   ~ 0
+Text Label 5900 4450 0    50   ~ 0
 MOSI
-Text Label 5700 5000 0    50   ~ 0
+Text Label 5900 4550 0    50   ~ 0
 MISO
-Text Label 5700 5100 0    50   ~ 0
+Text Label 5900 4650 0    50   ~ 0
 SCK
 Text Label 2150 3600 0    50   ~ 0
 A3
-Text Label 5700 4800 0    50   ~ 0
+Text Label 5900 4350 0    50   ~ 0
 A3
 $Comp
 L Connector:TestPoint TP5
@@ -2280,14 +2272,14 @@ F 3 "~" H 6950 1250 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6750 1150 6750 1250
-Text Label 5700 4600 0    50   ~ 0
+Text Label 5900 4150 0    50   ~ 0
 5V
-Text Label 5700 5200 0    50   ~ 0
+Text Label 5900 4750 0    50   ~ 0
 GNDD
 Wire Wire Line
-	5600 4600 5700 4600
+	5800 4150 5900 4150
 Wire Wire Line
-	5600 5200 5700 5200
+	5800 4750 5900 4750
 $Comp
 L Connector:TestPoint TP7
 U 1 1 5E645CBA
@@ -2342,4 +2334,39 @@ $EndComp
 Wire Wire Line
 	8900 2900 8900 3000
 Connection ~ 8900 3000
+Wire Wire Line
+	6650 3500 6600 3500
+Wire Wire Line
+	6650 3400 6600 3400
+Text Label 6600 3500 2    50   ~ 0
+SDA
+Text Label 6600 3400 2    50   ~ 0
+SCL
+$Comp
+L Connector_Generic:Conn_01x04 J8
+U 1 1 5E81FCAC
+P 5600 5400
+F 0 "J8" H 5518 4975 50  0000 C CNN
+F 1 "Conn_01x04" H 5518 5066 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 5600 5400 50  0001 C CNN
+F 3 "~" H 5600 5400 50  0001 C CNN
+	1    5600 5400
+	-1   0    0    1   
+$EndComp
+Text Label 5850 5300 0    50   ~ 0
+SCL
+Text Label 5850 5400 0    50   ~ 0
+SDA
+Text Label 5850 5500 0    50   ~ 0
+GNDD
+Text Label 5850 5200 0    50   ~ 0
+5V
+Wire Wire Line
+	5800 5200 5850 5200
+Wire Wire Line
+	5800 5300 5850 5300
+Wire Wire Line
+	5800 5400 5850 5400
+Wire Wire Line
+	5800 5500 5850 5500
 $EndSCHEMATC
