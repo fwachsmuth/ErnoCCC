@@ -39,16 +39,6 @@
             dac.setVoltage(4096, false);
           }
 
-PCB:
- *    SPI nach aussen legen
- *    Reset Switch?
- *    TP DAC
- *    TP VCTRL
- *    GND to J7
- *    SSR / GRAY an TPs, weg von J7
-          
- *    Encoder for Target Frame entry?
- *    Fidicules in the stencil
  *    Neuen R15 kaufen
  *    
  *    
@@ -121,7 +111,7 @@ SwitchManager theButton;
 #define ledPwmPin         5
 
 #define ledSlowerRed      7   //  --  Mirrored, since they are visible through a Mirror. Doh!
-#define ledSlowerYellow   A3  //  -
+#define ledSlowerYellow   9  //  -
 #define ledGreen          A2  //  o
 #define ledFasterYellow   A1  //  +
 #define ledFasterRed      A0  //  ++
