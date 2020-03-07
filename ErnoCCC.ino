@@ -303,14 +303,12 @@ void setup() {
   dac.begin(0x60);
   pinMode(ssrPin, OUTPUT);
   pinMode(ledPwmPin, OUTPUT);
-
   pinMode(ledSlowerRed, OUTPUT);     //  --
   pinMode(ledSlowerYellow, OUTPUT);  //  -
   pinMode(ledGreen, OUTPUT);         //  o
   pinMode(ledFasterYellow, OUTPUT);  //  +
   pinMode(ledFasterRed, OUTPUT);     //  ++
   
-
   analogWrite(ledPwmPin, 1);
 
   MeasuredMotorCtrlParams fromEEPROM;
@@ -374,6 +372,12 @@ void calibrateTrimPot() {
 }
 
 void calibrateCtrlVoltage() {
+  u8x8.clearDisplay();
+  u8x8.setFont(u8x8_font_7x14B_1x2_r);
+  u8x8.setCursor(1,3);
+//            ("----------------"));
+  u8x8.print(F("Calibrating..."));
+
   digitalWrite(ssrPin, HIGH);
   float actualFrequency;
   int lastTooFast = 0;
