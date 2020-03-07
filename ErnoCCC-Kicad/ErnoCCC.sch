@@ -1702,20 +1702,6 @@ F 3 "~" H 10050 1400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5950 6000 5950 6150
-Connection ~ 5950 6150
-$Comp
-L power:+5V #PWR025
-U 1 1 6022183D
-P 5950 6000
-F 0 "#PWR025" H 5950 5850 50  0001 C CNN
-F 1 "+5V" H 6000 6150 50  0000 C CNN
-F 2 "" H 5950 6000 50  0001 C CNN
-F 3 "" H 5950 6000 50  0001 C CNN
-	1    5950 6000
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
 	900  1000 900  1250
 Wire Wire Line
 	3200 750  3200 950 
