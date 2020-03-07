@@ -24,29 +24,6 @@
  *       DAC ne 4096 schicken
  *       Poti drehen bis Motor nicht mal mehr brummt
  *       
-          #include <Wire.h>
-          #include <Arduino.h>
-          #include <Adafruit_MCP4725.h> // Fancy DAC for voltage control
-          #include <SwitchManager.h>    // Button Handling and Debouncing, http://www.gammon.com.au/switches
-          
-          Adafruit_MCP4725 dac;                                   // Instantiate the DAC
-          #define ledPwmPin         5
-          #define ssrPin            6
-          
-          void setup() {
-            Serial.begin(115200);
-            dac.begin(0x60);
-            pinMode(ledPwmPin, OUTPUT);
-            pinMode(ssrPin, OUTPUT);
-            digitalWrite(ssrPin, HIGH);
-            analogWrite(ledPwmPin, 1);
-          }
-          
-          void loop() {
-            // put your main code here, to run repeatedly:
-            dac.setVoltage(4096, false);
-          }
-
  *    
  * 
  * - Remember the last Playback Speed and restore it when locking next time
@@ -364,7 +341,8 @@ void setup() {
   //
   if (digitalRead(theButtonPin) == LOW) { 
     Serial.println(F("In Setup"));
-    calibrateCtrlVoltage();
+    calibrateTrimPot();
+    //calibrateCtrlVoltage();
   }
 }
 
@@ -374,6 +352,25 @@ int calculateVoltageForFPS(float fps) {
   Serial.println(int(constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095)));
   return int(constrain(fps * motorVoltageScaleFactor + motorVoltageOffset, 0, 4095));
   
+}
+
+void calibrateTrimPot() {
+  u8x8.clearDisplay();
+  u8x8.setFont(u8x8_font_7x14B_1x2_r);
+  u8x8.setCursor(0,0);
+  u8x8.print(F("Adjust the Trim-"));
+  u8x8.setCursor(0,2);
+  u8x8.print(F("pot until the"));
+  u8x8.setCursor(0,4);
+  u8x8.print(F("Motor entirely"));
+  u8x8.setCursor(0,6);
+  u8x8.print(F("stops buzzing!"));
+
+  digitalWrite(ssrPin, HIGH);
+  analogWrite(ledPwmPin, 0);
+  dac.setVoltage(4095, false);
+  do {  
+  } while (true);
 }
 
 void calibrateCtrlVoltage() {
