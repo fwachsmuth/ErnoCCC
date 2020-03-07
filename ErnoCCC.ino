@@ -4,6 +4,14 @@
  * ErnoCCC – a modern controller for Erno Motor film viewers, is intended to work in Erno EM-1801 or Goko MM-1 Motorized Film Viewers. 
  * 
  * To Do: 
+ *    - catch if EEPROM returns nan
+ *    - calibrate by turning motor on with button pressed
+ *    - calibrate Trimpot by power up with button presser
+ *    
+ *    - Detect a Calibration with no running motor
+ *    - Turn on LED during Calibration
+ *    - Flash LED after Calibration
+ *    
  *    - line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
  *    - rename filmFps with shotFps or so
  *    - write latest filmFps to DAC as well
@@ -39,17 +47,12 @@
             dac.setVoltage(4096, false);
           }
 
- *    Neuen R15 kaufen
- *    
  *    
  * 
  * - Remember the last Playback Speed and restore it when locking next time
  * - Do not devide Encoder Impulses (segmentCount) and take both edges; recalculate Timer Dividers -> 4x faster controlling!
- * - Turn on LED during Calibration
- * - Flash LED after Caibration
  * - Draw some Display Stuff when Calibrating
  * - Take the smallest diff value in Calibration once testVoltage keeps repeating
- * - Detect a Calibration with no running motor
  * - Auto-off fürs Display
  * - Build a STOP function (even when motor is on)
  *  
@@ -59,10 +62,6 @@
  * - Control the Power LED (Stopped Mode)
  *  
  *  
- * Harware  
- * - Remove / Omit Peephole LED 
- * - Capacitor on orange out to integrate voltage changes?
- * 
  * 
  * Future Thoughts:
  * - Take over DC Motor entirely (H-Bridge, mechanical selenoid clutch)
