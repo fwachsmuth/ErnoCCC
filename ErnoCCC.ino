@@ -520,6 +520,9 @@ int findVoltageForSpeed(byte targetFpsSpeed) {
     Serial.print(testVoltage);
     Serial.print(F(" - gemessene Frequenz: "));
     Serial.println(actualFrequency);
+    if (abs(actualFrequency - targetFpsSpeed) > 2.0) setLeds(-2);
+    if (abs(actualFrequency - targetFpsSpeed) < 2.0) setLeds(-1);
+    if (abs(actualFrequency - targetFpsSpeed) < 0.5) setLeds(0);
     if (abs(actualFrequency - targetFpsSpeed) < 0.1) break;
     if (testVoltage == prevTestVoltage) break;
     prevTestVoltage = testVoltage;   
@@ -561,6 +564,7 @@ void calibrateCtrlVoltage() {
   hiSpeedVoltage = findVoltageForSpeed(25);
   loSpeedVoltage = findVoltageForSpeed(9);
   FreqMeasure.end;
+  ledsOff();
 
   /*
   0    = fast
@@ -1051,4 +1055,12 @@ float readEEPROMValue(uint8_t address) {
 void notFound() {
   u8x8.home();
   u8x8.print(404);
+}
+
+void ledsOff() {
+  digitalWrite(ledSlowerRed, LOW);
+  digitalWrite(ledSlowerYellow, LOW);
+  digitalWrite(ledGreen, LOW);
+  digitalWrite(ledFasterYellow, LOW);
+  digitalWrite(ledFasterRed, LOW);
 }
