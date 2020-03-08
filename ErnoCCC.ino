@@ -602,8 +602,10 @@ void calibrateCtrlVoltage() {
   u8x8.clearDisplay();
 
   u8x8.setFont(u8x8_font_courB18_2x3_n);
-  u8x8.setCursor(((sign) ? 4 : 2),3);
-  u8x8.print(F(":  :  -"));    // when tc is negative, do not render sub frame count, but a leading minus sign
+  u8x8.setCursor(((sign) ? 2 : 0),3);
+  u8x8.print(F("0:00:00-"));    // when tc is negative, do not render sub frame count, but a leading minus sign
+  drawCurrentTime(false);
+
 
 }
 
@@ -704,13 +706,6 @@ bool setupTimer1forFps(byte sollFpsState) {
     TCCR1B |= (1 << WGM12);
 
     switch (sollFpsState) {
-//      case 16:
-//        OCR1A = 15624;    // 16 Hz (16000000/((15624+1)*64))
-//        TCCR1B |= (1 << CS11) | (1 << CS10); // Prescaler 64
-//        timerFactor = 1;
-//
-//        break;
-
       case FPS_9:
         OCR1A = 10100;    // 198.000198000198 Hz (16000000/((10100+1)*8)),
         //              divided by 22 is 9,000009.. Hz
