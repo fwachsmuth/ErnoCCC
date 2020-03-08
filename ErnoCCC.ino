@@ -5,7 +5,6 @@
  * 
  * To Do: 
  *    - catch if EEPROM returns nan
- *    - calibrate by turning motor on with button pressed
  *    - calibrate Trimpot by power up with button presser
  *    
  *    - Detect a Calibration with no running motor
@@ -124,7 +123,7 @@ unsigned long lastMillis = 0;
 long frameDifference = 0;
 
 int lastCorrection = 0;
-
+bool buttonCurrentlyPressed = false;
 
 // Global Vars for Motor Control Voltage Calibration  
 float motorVoltageScaleFactor = -78.00; // Final Factor and Offset are calcuclated during Calibration
@@ -371,130 +370,7 @@ void calibrateTrimPot() {
   } while (true);
 }
 
-void calibrateCtrlVoltage() {
-  u8x8.clearDisplay();
-  u8x8.setFont(u8x8_font_7x14B_1x2_r);
-  u8x8.setCursor(1,3);
-//            ("----------------"));
-  u8x8.print(F("Calibrating..."));
 
-  digitalWrite(ssrPin, HIGH);
-  float actualFrequency;
-  int lastTooFast = 0;
-  int lastTooSlow = 4095;
-  int testVoltage = 500;
-  int prevTestVoltage;
-  int hiSpeedVoltage;
-  int loSpeedVoltage;
-
-  /*
-  0    = fast
-  4095 = slow
-
-  voltage = ((Vhi - Vlo) / (HF - LF)) * desiredFPS + (Vhi - HF * ((Vhi - Vlo) / (HF - LF))
-            _____________A___________                            _____________A___________ 
-                                                      _________________B__________________ 
-  */
-
-  FreqMeasure.begin();
-  
-  Serial.println(F("Searching 25 fps Ctrl Value in 50 Measurements: "));
-  do {
-    dac.setVoltage(testVoltage, false);
-    while (freqCount <= 50) { 
-      if (FreqMeasure.available()) {
-        // average several reading together
-        freqSum = freqSum + FreqMeasure.read();
-        freqCount++;
-      }
-    }
-    actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
-    freqSum = 0;
-    freqCount = 0;
-    Serial.print(F("DAC Wert:"));
-    Serial.print(testVoltage);
-    Serial.print(F(" - gemessene Frequenz: "));
-    Serial.println(actualFrequency);
-    if (abs(actualFrequency - hiFpsTestFreq) < 0.1) break;
-    if (testVoltage == prevTestVoltage) break;
-    prevTestVoltage = testVoltage;   
-    if (actualFrequency > hiFpsTestFreq) { // too fast
-      lastTooFast = testVoltage;
-      testVoltage = (testVoltage + lastTooSlow) / 2;
-    }
-    if (actualFrequency < hiFpsTestFreq) { // too slow
-      lastTooSlow = testVoltage;
-      testVoltage = (testVoltage + lastTooFast) / 2;
-    }
-  } while (true);
-  hiSpeedVoltage = testVoltage;
-  Serial.print(F("Hi-Speed Voltage Found: "));
-  Serial.println(hiSpeedVoltage);
-  Serial.println(F("******"));
-
-  // prepare to determine the low speed ctrl voltage
-  
-  lastTooFast = 0;
-  lastTooSlow = 4095;
-  testVoltage = 3000;
-  Serial.println(F("Searching 9 fps Ctrl Value in 50 Measurements: "));
-  do {
-    dac.setVoltage(testVoltage, false);
-    while (freqCount <= 50) { 
-      if (FreqMeasure.available()) {
-        // average several reading together
-        freqSum = freqSum + FreqMeasure.read();
-        freqCount++;
-      }
-    }
-    actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
-    freqSum = 0;
-    freqCount = 0;
-    Serial.print(F("DAC Wert:"));
-    Serial.print(testVoltage);
-    Serial.print(F(" - gemessene Frequenz: "));
-    Serial.println(actualFrequency);
-    if (abs(actualFrequency - loFpsTestFreq) < 0.1) break;
-    if (testVoltage == prevTestVoltage) break;
-    prevTestVoltage = testVoltage;   
-    if (actualFrequency > loFpsTestFreq) { // too fast
-      lastTooFast = testVoltage;
-      testVoltage = (testVoltage + lastTooSlow) / 2;
-    }
-    if (actualFrequency < loFpsTestFreq) { // too slow
-      lastTooSlow = testVoltage;
-      testVoltage = (testVoltage + lastTooFast) / 2;
-    }
-  } while (true);
-  loSpeedVoltage = testVoltage;
-  Serial.print(F("Lo-Speed Voltage Found: "));
-  Serial.println(loSpeedVoltage);
-  Serial.println(F("******"));
-
-  motorVoltageScaleFactor = (hiSpeedVoltage - loSpeedVoltage) / (hiFpsTestFreq - loFpsTestFreq) ; 
-  motorVoltageOffset = hiSpeedVoltage - hiFpsTestFreq * motorVoltageScaleFactor;      
-  Serial.print(F("A: "));
-  Serial.println(motorVoltageScaleFactor);
-  Serial.print(F("B: "));
-  Serial.println(motorVoltageOffset);
-  
-  // write testVoltage to EEPROM and global vars
-  MeasuredMotorCtrlParams justMeasured = {
-    motorVoltageScaleFactor,
-    motorVoltageOffset
-  };
-  EEPROM.put(4, justMeasured);
-  Serial.println(F("Struct written to EEPROM at Adr 4."));
-  Serial.println();
-
-  for (int i=1; i<41; i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(calculateVoltageForFPS(i));
-  }
-    
-  FreqMeasure.end;
-}
 
 // ******************************************************************************
 void loop() {
@@ -521,6 +397,11 @@ void loop() {
   //
   if (myEnc.read() != lastEncoderPos) {
     state = STATE_RUNNING;
+    if (buttonCurrentlyPressed) {
+      Serial.println(F("Calibration initiated."));
+      buttonCurrentlyPressed = false;
+      calibrateCtrlVoltage();
+    }
     lastEncoderChangeTs = millis();
     lastEncoderPos = myEnc.read();
   } else {
@@ -591,6 +472,7 @@ void loop() {
 
 // End Loop -----------------------------------------------
 
+
 ISR(TIMER1_COMPA_vect) {
   if (timerDivider == 0) {
     //    digitalWrite(ledPin, digitalRead(ledPin) ^ 1);
@@ -610,6 +492,101 @@ void projectorCountISR() {
   }
   projectorDivider++;
   projectorDivider %= (segmentCount); // we are triggering on CHANGE
+}
+
+int findVoltageForSpeed(byte targetFpsSpeed) {
+  float actualFrequency;
+  int lastTooFast = 0;
+  int lastTooSlow = 4095;
+  int testVoltage = 2048;
+  int prevTestVoltage;
+
+  Serial.print(F("Searching "));
+  Serial.print(targetFpsSpeed);
+  Serial.println(F(" fps Ctrl Value in 100 Measurements: "));
+  do {
+    dac.setVoltage(testVoltage, false);
+    while (freqCount <= 100) { 
+      if (FreqMeasure.available()) {
+        // average several reading together
+        freqSum = freqSum + FreqMeasure.read();
+        freqCount++;
+      }
+    }
+    actualFrequency = (FreqMeasure.countToFrequency(freqSum / freqCount) / 2.00 );
+    freqSum = 0;
+    freqCount = 0;
+    Serial.print(F("DAC Wert:"));
+    Serial.print(testVoltage);
+    Serial.print(F(" - gemessene Frequenz: "));
+    Serial.println(actualFrequency);
+    if (abs(actualFrequency - targetFpsSpeed) < 0.1) break;
+    if (testVoltage == prevTestVoltage) break;
+    prevTestVoltage = testVoltage;   
+    if (actualFrequency > targetFpsSpeed) { // too fast
+      lastTooFast = testVoltage;
+      testVoltage = (testVoltage + lastTooSlow) / 2;
+    }
+    if (actualFrequency < targetFpsSpeed) { // too slow
+      lastTooSlow = testVoltage;
+      testVoltage = (testVoltage + lastTooFast) / 2;
+    }
+  } while (true);
+
+  Serial.print(F("Voltage Found: "));
+  Serial.println(targetFpsSpeed);
+  return testVoltage;
+}
+
+void calibrateCtrlVoltage() {
+  int hiSpeedVoltage;
+  int loSpeedVoltage;
+
+  u8x8.clearDisplay();
+  u8x8.setFont(u8x8_font_7x14B_1x2_r);
+  u8x8.setCursor(1,3);
+//            ("----------------"));
+  u8x8.print(F("Calibrating..."));
+
+  digitalWrite(ssrPin, HIGH);
+  FreqMeasure.begin();
+  hiSpeedVoltage = findVoltageForSpeed(25);
+  loSpeedVoltage = findVoltageForSpeed(9);
+  FreqMeasure.end;
+
+  /*
+  0    = fast
+  4095 = slow
+
+  voltage = ((Vhi - Vlo) / (HF - LF)) * desiredFPS + (Vhi - HF * ((Vhi - Vlo) / (HF - LF))
+            _____________A___________                            _____________A___________ 
+                                                      _________________B__________________ 
+  */
+
+  motorVoltageScaleFactor = (hiSpeedVoltage - loSpeedVoltage) / (hiFpsTestFreq - loFpsTestFreq) ; 
+  motorVoltageOffset = hiSpeedVoltage - hiFpsTestFreq * motorVoltageScaleFactor;      
+  Serial.print(F("A: "));
+  Serial.println(motorVoltageScaleFactor);
+  Serial.print(F("B: "));
+  Serial.println(motorVoltageOffset);
+  
+  // write testVoltage to EEPROM and global vars
+  MeasuredMotorCtrlParams justMeasured = {
+    motorVoltageScaleFactor,
+    motorVoltageOffset
+  };
+  EEPROM.put(4, justMeasured);
+  Serial.println(F("Struct written to EEPROM at Adr 4."));
+  Serial.println();
+
+//  for (int i=1; i<41; i++) {
+//    Serial.print(i);
+//    Serial.print(": ");
+//    Serial.println(calculateVoltageForFPS(i));
+//  }
+    
+
+  u8x8.clearDisplay();
 }
 
 void setLeds(int bargraph) {
@@ -842,6 +819,7 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
   // whichPin will be which pin caused this change (so you can share the function amongst multiple switches)
 
   if (newState == HIGH && interval < 1500) { // on button release
+    buttonCurrentlyPressed = false;
     if (!ignoreNextButtonPress) {
       switch (state) {
         case STATE_RUNNING:
@@ -882,6 +860,10 @@ void onButtonPress(const byte newState, const unsigned long interval, const byte
   } else if (newState == LOW) { //on button press
     switch (state) {
       case STATE_STOPPED:
+
+        buttonCurrentlyPressed = true;
+        // Check if the Motor starts, and then go into calibration mode
+        
         requiredMillis = millis() + 1500;
         checkRequiredMillisInLoop = true;
         break;
