@@ -8,7 +8,8 @@
  *    - Turn on Power-LED during Calibration
  *    - Take the smallest diff value in Calibration once testVoltage keeps repeating
  *    - use intermediate values (ring buffer?) in controll
- *    
+ *    - Null wird im Nulldurchgang doppelt gezählt
+ *    - Prellt Reset?
  *    
  *    - line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
  *    - rename filmFps with shotFps or so
@@ -18,9 +19,6 @@
  *    
  *    Dynamic Baseline Adjustment?
  *    Detect uncalibrated launch
- *    Prepare for Trimpot adjustment:
- *       DAC ne 4096 schicken
- *       Poti drehen bis Motor nicht mal mehr brummt
  *       
  *    
  * 
@@ -32,7 +30,6 @@
  *  
  * - Fix Kalles 16 fps bug
  * - Create Timers for the 9 reference pulse
- * - Exit RESETCOUNTER after timeout OR when the impulse counter changes
  * - Control the Power LED (Stopped Mode)
  *  
  *  
