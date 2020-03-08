@@ -5,11 +5,10 @@
  * 
  * To Do: 
  *    - catch if EEPROM returns nan
- *    - calibrate Trimpot by power up with button presser
+ *    - Turn on Power-LED during Calibration
+ *    - Take the smallest diff value in Calibration once testVoltage keeps repeating
+ *    - use intermediate values (ring buffer?) in controll
  *    
- *    - Detect a Calibration with no running motor
- *    - Turn on LED during Calibration
- *    - Flash LED after Calibration
  *    
  *    - line 810ff is still messed up. How can fpsState = 6 be interpreted as 1?
  *    - rename filmFps with shotFps or so
@@ -28,7 +27,6 @@
  * - Remember the last Playback Speed and restore it when locking next time
  * - Do not devide Encoder Impulses (segmentCount) and take both edges; recalculate Timer Dividers -> 4x faster controlling!
  * - Draw some Display Stuff when Calibrating
- * - Take the smallest diff value in Calibration once testVoltage keeps repeating
  * - Auto-off fürs Display
  * - Build a STOP function (even when motor is on)
  *  
@@ -160,6 +158,7 @@ uint8_t prevPaintedFps = 0;
 #define STATE_RUNNING     16    // 0x10
 
 #define isRunning         (state >> 4)
+#define isCounterVisible  (state % 16 == 0)
 #define wasCounterVisible (prevPaintedState % 16 == 0)
 
 
@@ -172,10 +171,9 @@ unsigned int currentFilmSecond; // Good for films up to 18 hours, should be enou
 float prevPaintedFrequency = -999;
 
 uint8_t state            = 0;
-uint8_t lastState       = 0;
 uint8_t prevPaintedState = 99;
 
-bool ignoreNextButtonPress     = false;
+bool ignoreNextButtonRelease     = false;
 unsigned long requiredMillis   = 0;
 unsigned long writeToEEPROM    = 0;
 unsigned long lastEncoderPos;
@@ -385,10 +383,12 @@ void loop() {
   if ((millisNow % 8000 == 0) && (lastMillis != millisNow)) {
     Serial.print("Timer: ");
     Serial.print(timerFrames);
-    Serial.print(", Projektor: ");
+    Serial.print(", Projector: ");
     Serial.print(projectorFrames);
     Serial.print(", Difference ***: ");
-    Serial.println(frameDifference);
+    Serial.print(frameDifference);
+    Serial.print(", State: ");
+    Serial.println(state);
     lastMillis = millisNow;
   }  
 
@@ -396,31 +396,33 @@ void loop() {
   // determine if the viewer is running or not, since we actually do not have a Stop Pin anymore 
   //
   if (myEnc.read() != lastEncoderPos) {
-    state = STATE_RUNNING;
-    if (buttonCurrentlyPressed) {
-      Serial.println(F("Calibration initiated."));
-      buttonCurrentlyPressed = false;
-      calibrateCtrlVoltage();
+    if (!isRunning) {
+      state = STATE_RUNNING;
+      drawState();
+      if (buttonCurrentlyPressed) {
+        Serial.println(F("Calibration initiated."));
+        buttonCurrentlyPressed = false;
+        calibrateCtrlVoltage();
+      }
     }
     lastEncoderChangeTs = millis();
     lastEncoderPos = myEnc.read();
-  } else {
-    if (millis() - lastEncoderChangeTs > 100) {
-      state = STATE_STOPPED;
-      lastEncoderPos = myEnc.read();
-    }
+  } else if (isRunning && millis() - lastEncoderChangeTs > 100) {
+    state = STATE_STOPPED;
+    drawState();
+    lastEncoderPos = myEnc.read();
   }
 
   theButton.check();
-  if (state != lastState) {
+  if (state != prevPaintedState) {
+    Serial.print("Detected different state in loop: ");
     drawState();
-    lastState = state;
   } 
 
 
   currentFrameCount = myEnc.read() / 4;
   if (currentFrameCount != prevFrameCount) {
-    if (wasCounterVisible) {
+    if (isCounterVisible) {
       prevFrameCount = currentFrameCount;
       drawCurrentTime(false);
     } else {
@@ -764,18 +766,20 @@ bool setupTimer1forFps(byte sollFpsState) {
 }
 
 void drawState() {
+  Serial.print("Drew state ");
+  Serial.println(state);
   checkRequiredMillisInLoop = false;
-  if (!wasCounterVisible) {
+  if (wasCounterVisible != isCounterVisible) {
     u8x8.clearDisplay();
-    drawCurrentTime(true);
+    if (isCounterVisible) drawCurrentTime(true);
   }
   switch (state) {
     default:
       notFound();
       break;
     case STATE_STOPPED:
-      if (prevPaintedState == STATE_RESET) ignoreNextButtonPress = true;
-      Serial.println(F("Freq-Measuer OFF, but do NOT start the Timer1!"));
+      if (prevPaintedState == STATE_RESET) ignoreNextButtonRelease = true;
+      Serial.println(F("Freq-Measurer OFF, but do NOT start the Timer1!"));
       FreqMeasure.end();
       u8x8.setFont(u8x8_font_7x14B_1x2_r);
       u8x8.setCursor(0,6);
@@ -813,13 +817,13 @@ void drawState() {
       u8x8.drawTile(12,6,3,unlockedLockTop);
       fpsState = FPS_UNLOCKED;
 
-      Serial.println(F("Freq-Measuer ON, Timer1 STOP"));
+      Serial.println(F("Freq-Measurer ON, Timer1 STOP"));
       stopTimer1();
       detachInterrupt(digitalPinToInterrupt(impDetectorPin));
       Serial.println(F("Crystal Control OFF"));
       digitalWrite(ssrPin, LOW);
       FreqMeasure.begin();
-      
+
       drawCurrentCustomFrequency();
       if (checkWriteToEEPROMInLoop) {
         checkWriteToEEPROMInLoop = false;
@@ -831,50 +835,53 @@ void drawState() {
 }
 
 void onButtonPress(const byte newState, const unsigned long interval, const byte whichPin) {
-  // newState will be LOW or HIGH (the is the state the switch is now in)
+  // newState will be LOW or HIGH (the state the switch is now in)
   // interval will be how many ms between the opposite state and this one
   // whichPin will be which pin caused this change (so you can share the function amongst multiple switches)
 
-  if (newState == HIGH && interval < 1500) { // on button release
+  if (newState == HIGH) { // on button release
     buttonCurrentlyPressed = false;
-    if (!ignoreNextButtonPress) {
-      switch (state) {
-        case STATE_RUNNING:
-          fpsState++;
+    if (interval < 1500) {
+      if (!ignoreNextButtonRelease) {
+        switch (state) {
+          case STATE_RUNNING:
+            fpsState++;
 
-          Serial.println();
-          Serial.println(fpsState);
-          Serial.println(); 
-        
-          if (fpsState == FPS_UNLOCKED + 1) {     // Draw a Lock 
-            u8x8.drawTile(12,6,2,lockedLockTop);
-            u8x8.drawTile(14,6,1,emptyTile);
-            u8x8.setFont(u8x8_font_7x14B_1x2_n);
-            u8x8.setCursor(5,6);
-            drawCurrentFps(false, false);
-          } else {
-            drawCurrentFps(false, true);
-          }
-          
-//        Serial.println(F("Freq-Measuer OFF, starting Timer1!"));
-          FreqMeasure.end();
+            Serial.println();
+            Serial.println(fpsState);
+            Serial.println();
 
-          Serial.print(F("Requesting new Timer State: "));
-          Serial.println(fpsState);
-          setupTimer1forFps(fpsState); 
-          
-          attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
-          Serial.println(F("Crystal Control ON"));
-          digitalWrite(ssrPin, HIGH);
-          break;
-        case STATE_STOPPED:
-          fpsState++;
-          drawCurrentFps(true, true);
-        default:
-          break;
+            if (fpsState == FPS_UNLOCKED + 1) {     // Draw a Lock
+              u8x8.drawTile(12,6,2,lockedLockTop);
+              u8x8.drawTile(14,6,1,emptyTile);
+              u8x8.setFont(u8x8_font_7x14B_1x2_n);
+              u8x8.setCursor(5,6);
+              drawCurrentFps(false, false);
+            } else {
+              drawCurrentFps(false, true);
+            }
+
+//          Serial.println(F("Freq-Measurer OFF, starting Timer1!"));
+            FreqMeasure.end();
+
+            Serial.print(F("Requesting new Timer State: "));
+            Serial.println(fpsState);
+            setupTimer1forFps(fpsState);
+
+            attachInterrupt(digitalPinToInterrupt(impDetectorPin), projectorCountISR, CHANGE);
+            Serial.println(F("Crystal Control ON"));
+            digitalWrite(ssrPin, HIGH);
+            break;
+          case STATE_STOPPED:
+            fpsState++;
+            drawCurrentFps(true, true);
+          default:
+            break;
+        }
       }
-    } else ignoreNextButtonPress = false; 
-  } else if (newState == LOW) { //on button press
+    }
+    ignoreNextButtonRelease = false;
+  } else if (newState == LOW) { // on button press
     switch (state) {
       case STATE_STOPPED:
 
