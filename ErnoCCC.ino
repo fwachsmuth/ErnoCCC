@@ -382,7 +382,7 @@ void loop() {
   frameDifference = timerFrames - projectorFrames;
   controlProjector(frameDifference);
 
-  if ((millisNow % 2000 == 0) && (lastMillis != millisNow)) {
+  if ((millisNow % 8000 == 0) && (lastMillis != millisNow)) {
     Serial.print("Timer: ");
     Serial.print(timerFrames);
     Serial.print(", Projektor: ");
@@ -549,6 +549,14 @@ void calibrateCtrlVoltage() {
   u8x8.print(F("Calibrating..."));
 
   digitalWrite(ssrPin, HIGH);
+  for (int i = 4095; i >= 0; i--) {
+    dac.setVoltage(i, false);
+    delay(5);
+  }
+  
+
+  delay(5000);
+  
   FreqMeasure.begin();
   hiSpeedVoltage = findVoltageForSpeed(25);
   loSpeedVoltage = findVoltageForSpeed(9);
@@ -579,14 +587,24 @@ void calibrateCtrlVoltage() {
   Serial.println(F("Struct written to EEPROM at Adr 4."));
   Serial.println();
 
-//  for (int i=1; i<41; i++) {
-//    Serial.print(i);
-//    Serial.print(": ");
-//    Serial.println(calculateVoltageForFPS(i));
-//  }
-    
+  u8x8.clearDisplay();
+  u8x8.setFont(u8x8_font_7x14B_1x2_r);
+  u8x8.setCursor(2,3);
+//            ("----------------"));
+  u8x8.print(F("Calibration"));
+  u8x8.setCursor(3,5);
+  u8x8.print(F("completed."));
+  delay(5000);
+  
+  dac.setVoltage(4095, false); // Halt
+  delay(2000);
 
   u8x8.clearDisplay();
+
+  u8x8.setFont(u8x8_font_courB18_2x3_n);
+  u8x8.setCursor(((sign) ? 4 : 2),3);
+  u8x8.print(F(":  :  -"));    // when tc is negative, do not render sub frame count, but a leading minus sign
+
 }
 
 void setLeds(int bargraph) {
