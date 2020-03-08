@@ -1023,12 +1023,10 @@ void drawCurrentTime(bool forceFullRedraw) {
       }
     }
   }
-  if (!forceFullRedraw) {
-    if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
-    else u8x8.setCursor(12,0);
-    u8x8.print(" ");
-    u8x8.print(currentFrameCount);
-  }
+  if (currentFrameCount != 0) u8x8.setCursor(16 - (int(log10(abs(currentFrameCount)) + (sign ? 3 : 2)) << 1),0); // Kalle magic!
+  else u8x8.setCursor(12,0);
+  u8x8.print(" ");
+  u8x8.print(currentFrameCount);
 
   // Print current Subframe for SMPTE compliance
   //
@@ -1047,7 +1045,7 @@ uint8_t getFpsState(float inputFps) {
     case 24: return FPS_24;
     case 25: return FPS_25;
     case 9:  return FPS_9;
-    case 16: return FPS_16_2_3;
+    default: return FPS_16_2_3;
   }
 }
 
